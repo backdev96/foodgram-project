@@ -1,27 +1,26 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import Recipe, User, Follow, Favourite, ShoppingList, Tag
+from .models import Recipe, User, Follow, Favourite, ShoppingList
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-
-
+from .utils import food_time_filter, get_ingredients
 
 from .forms import RecipeForm
 
 def index(request):
-    tag_list = Tag.objects.all()
-    tags = request.GET.getlist('tag')
-    if tags == []:
-        for tag in tag_list:
-            tags.append(tag.name)
-    recipe_list = Recipe.objects.order_by('-pub_date').all()
+    recipe = Recipe.objects.select_related(
+        'author').order_by('-pub_date').all()
+    recipe_list, food_time = food_time_filter(request, recipe)
+
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(
-        request,
-        'indexNotAuth.html',
-        {'page': page, 'paginator': paginator}
-    ) 
+        request, 'index.html', {
+            'page': page,
+            'paginator': paginator,
+            'food_time': food_time
+        }
+    )
 
 
 def recipe_view(request, slug):

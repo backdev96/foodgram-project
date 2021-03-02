@@ -6,30 +6,6 @@ from taggit.managers import TaggableManager
 
 User = get_user_model()
 
-class Tag(models.Model):
-    tag_options = {
-        'breakfast': ['orange', 'Завтрак'],
-        'lunch': ['green', 'Обед'],
-        'dinner': ['purple', 'Ужин']
-    }
-    TAG_CHOICES = [
-        ('breakfast', 'Завтрак'),
-        ('lunch', 'Обед'),
-        ('dinner', 'Ужин'),
-    ]
-    title = models.CharField(max_length=20, verbose_name='Title')
-
-    @property
-    def color(self):
-        return self.tag_options[self.title][0]
-
-    @property
-    def name(self):
-        return self.tag_options[self.title][1]
-    
-    def __str__(self):
-        return self.title
-
 
 class Ingredient(models.Model):
     title = models.CharField(max_length=100, verbose_name='Title')
@@ -52,18 +28,15 @@ class Recipe(models.Model):
                               related_name='recipe', verbose_name='Ingriedient', help_text='Choose your ingridients')
     slug = models.SlugField(max_length=50, unique=True, blank=False, null=True)
     cooking_time = models.PositiveIntegerField(blank=False)
-    tag = models.ManyToManyField(Tag, related_name='recipes', verbose_name='Tags', blank=True)
-    
-    @property
-    def taglist(self):
-        return list(self.tags.all())
-
-    @property
-    def ingredientslist(self):
-        return list(self.ingredients.all())
-    
-    class Meta:
-        ordering = ('-pub_date',)
+    breakfast = models.BooleanField(
+        default=False, verbose_name='Завтрак'
+    )
+    lunch = models.BooleanField(
+        default=False, verbose_name='Обед'
+    )
+    dinner = models.BooleanField(
+        default=False, verbose_name='Ужин'
+    )
 
     def __str__(self):
         short_description = self.description[:10]
