@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import Recipe, User, Follow, Favourite, ShoppingList
+from .models import Recipe, User, Follow, Favourite, ShoppingList, Ingredient, IngredientForRecipe
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from .utils import food_time_filter, get_ingredients
-
+from foodgram.settings import ITEMS_FOR_PAGINATOR
 from .forms import RecipeForm
 
 def index(request):
@@ -11,7 +11,7 @@ def index(request):
         'author').order_by('-pub_date').all()
     recipe_list, food_time = food_time_filter(request, recipe)
 
-    paginator = Paginator(recipe_list, 6)
+    paginator = Paginator(recipe_list, ITEMS_FOR_PAGINATOR)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(
@@ -23,9 +23,13 @@ def index(request):
     )
 
 
-def recipe_view(request, slug):
-    recipe = get_object_or_404(Recipe, slug=slug)
-    return render(request, 'singlePage.html', {'recipe': recipe})
+def recipe_view(request, recipe_id, username):
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    username = get_object_or_404(User, username=username)
+    ingredients = IngredientForRecipe.objects.filter(recipe=recipe)
+    return render(request, 'singlePage.html', {'username': username, 
+                                                'recipe': recipe, 
+                                                'ingredients': ingredients})
 
 
 def profile(request, username):
@@ -44,15 +48,32 @@ def profile(request, username):
 
 @login_required
 def recipe_new(request):
-    form = RecipeForm(request.POST, files=request.FILES or None)
-    if request.method != 'POST':
-        return render(request, 'formRecipe.html', {'form': form})
-    if form.is_valid():
-        recipe_new = form.save(commit=False)
-        recipe_new.author = request.user
-        recipe_new.save()
-        return redirect('index')
-    return render(request, 'formRecipe.html', {'form' : form})
+    user = User.objects.get(username=request.user)
+
+    if request.method == 'POST':
+        ingr = get_ingredients(request)
+        form = RecipeForm(request.POST or None, files=request.FILES or None)
+        if not ingr:
+            form.add_error(None, 'Добавьте ингредиенты')
+
+        elif form.is_valid():
+            recipe = form.save(commit=False)
+            recipe.author = user
+            recipe.save()
+            for ingr_name, amount in ingr.items():
+                ingr_obj = get_object_or_404(Ingredient, title=ingr_name)
+                ingr_recipe = IngredientRecipe(
+                    ingredient=ingr_obj,
+                    recipe=recipe,
+                    amount=amount,
+                )
+                ingr_recipe.save()
+            form.save_m2m()
+            return redirect('index')
+    else:
+        form = RecipeForm()
+    return render(request, 'formRecipe.html', {'form': form})
+
 
 
 @login_required
@@ -89,28 +110,20 @@ def profile_unfollow(request, username):
 
 @login_required
 def follow_index(request):
-    authors = User.objects.filter(following__user=request.user)
-    recipes = Recipe.objects.filter(
-        author__in=authors).order_by('-pub_date')
-    count_recipes = {}
-    for author in authors:
-        recipes_count[author.username] = Recipe.objects.filter(
-            author=author).count()-3
-    recipes_for_print = []
-    for author in authors:
-        recipes_for_print.append(Recipe.objects.filter(
-            author=author).order_by('-pub_date')[:3])
-    paginator = Paginator(authors, 6)
-    page_number = request.GET.get('page')
+    follow = Follow.objects.filter(user=request.user)
+    cnt = {}
+    for author in follow:
+        amount = Recipe.objects.filter(author=author.author).count()
+        cnt[author.author] = amount
+    paginator = Paginator(follow, ITEMS_FOR_PAGINATOR)
+    page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
-    context = {
+    return render(request, "follow.html", {
         "page": page,
         "paginator": paginator,
-        "authors": authors,
-        "count_recipes": count_recipes,
-        "recipes_for_print": recipes_for_print
+        "cnt": cnt,
     }
-    return render(request, "myFollow.html", context)
+    )
 
 @login_required
 def add_to_cart(request):
@@ -120,7 +133,7 @@ def add_to_cart(request):
 @login_required
 def add_to_favourites(request, recipe_id):
     recipes = Recipe.objects.filter(author__following__user=request.user)
-    paginator = Paginator(recipes, 6)
+    paginator = Paginator(recipes, ITEMS_FOR_PAGINATOR)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     context = {
@@ -150,7 +163,7 @@ def favourite_index(request):
         "page": page,
         "recipes": recipes
     }
-    return render(request, "myFollow.html", context)
+    return render(request, "follow.html", context)
 
 
 @login_required
@@ -173,3 +186,13 @@ def purchases_delete(request, recipe_id):
     shops = get_object_or_404(ShoppingList, user=request.user)
     shops.recipes.remove(recipe)
     return JsonResponse({"success": True})
+
+
+@login_required
+def shopping_list(request):
+    shopping_list = ShoppingList.objects.filter(user=request.user).all()
+    return render(
+        request,
+        'shopList.html',
+        {'shopping_list': shopping_list}
+    )

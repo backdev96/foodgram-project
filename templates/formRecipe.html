@@ -1,15 +1,10 @@
 {% extends 'base.html' %}
-{% block title %} 
-{% if recipe %} Редактирование рецепта
-{% else %}Создание рецепта
-{% endif %}
-{% endblock %}
+{% block title %}Создание рецепта{% endblock %}
+
 {% load static %}
 {% block static %}
-    <link rel="stylesheet" href="{% static 'pages/index.css' %}">
-{% endblock static %}
-
-{% load user_filters %}
+    <link rel="stylesheet" href="{% static 'pages/form.css' %}">
+{% endblock %}
 {% block content %}
 {% load user_filters %}
 {% include 'includes/nav.html' with new_recipe=True %}
@@ -117,12 +112,10 @@
     </div>
 </main>
 
-{% include 'includes/footer.html' %}
+<script src="{% static 'js/config/config.js' %}"></script>
+<script src="{% static 'js/components/Header.js' %}"></script>
+<script src="{% static 'js/utils/debouncing.js' %}"></script>
+<script src="{% static 'js/api/Api.js' %}"></script>
+<script src="{% static 'formRecipe.js' %}"></script>
 
-{%  endblock %}
-<script src="./js/config/config.js"></script>
-<script src="./js/components/Header.js"></script>
-<script src="./js/utils/debouncing.js"></script>
-<script src="./js/api/Api.js"></script>
-<script src="formRecipe.js"></script>
-</body>
+{% endblock content %}

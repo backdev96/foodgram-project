@@ -29,13 +29,13 @@ class Recipe(models.Model):
     slug = models.SlugField(max_length=50, unique=True, blank=False, null=True)
     cooking_time = models.PositiveIntegerField(blank=False)
     breakfast = models.BooleanField(
-        default=False, verbose_name='Завтрак'
+        default=False, verbose_name='Breakfast'
     )
     lunch = models.BooleanField(
-        default=False, verbose_name='Обед'
+        default=False, verbose_name='Lunch'
     )
     dinner = models.BooleanField(
-        default=False, verbose_name='Ужин'
+        default=False, verbose_name='Dinner'
     )
 
     def __str__(self):
@@ -46,8 +46,8 @@ class Recipe(models.Model):
 class Follow(models.Model):
     '''Follow model'''
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name='follow')
-    following = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name='following')
-    unique_together = ('user', 'following')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following', null=True)
+    unique_together = ('user', 'author')
 
     def __str__(self):
         return f'Follows {self.user}'
