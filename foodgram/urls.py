@@ -3,13 +3,19 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls.static import static
 from django.contrib.auth import views
+from django.conf.urls import handler404, handler500
+
+
+handler404 = 'recipe.views.page_not_found'
+handler500 = 'recipe.views.server_error'
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('recipe.urls')),
-    path("auth/", include("users.urls")),
-    path("auth/", include("django.contrib.auth.urls")),
+    path('auth/', include('users.urls')),
+    path('auth/', include('django.contrib.auth.urls')),
+    path('api/', include('api.urls')),
 ]
 
 if settings.DEBUG:

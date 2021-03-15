@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.forms.widgets import TextInput
 from django.utils.dateparse import parse_duration
 from taggit.managers import TaggableManager
+from sorl.thumbnail import ImageField
+
 
 User = get_user_model()
 
@@ -22,7 +24,7 @@ class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     pub_date = models.DateTimeField(verbose_name='date published', auto_now_add=True)
-    image = models.ImageField(upload_to='posts/', blank=True, null=True, verbose_name='Image')
+    image = models.ImageField(upload_to='recipes/', blank=True, null=True, verbose_name='Image')
     description = models.TextField(verbose_name='Текст', help_text='Text description')
     ingredients = models.ForeignKey(Ingredient, on_delete=models.SET_NULL, blank=True, null=True,
                               related_name='recipe', verbose_name='Ingriedient', help_text='Choose your ingridients')
