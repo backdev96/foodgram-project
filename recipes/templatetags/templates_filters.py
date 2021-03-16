@@ -1,5 +1,6 @@
 from django import template
-from recipes.models import ShopingList, FollowRecipe, FollowUser, Recipe
+
+from recipes.models import FollowRecipe, FollowUser, Recipe, ShopingList
 
 register = template.Library()
 
@@ -43,9 +44,6 @@ def get_recipes(author):
 
 @register.filter(name='get_count_recipes')
 def get_count_recipes(author):
-# Значение "3" выбрано для правильного расчета и склонения количества рецептов,
-# которые будут выводиться дополнительной кнопкой количества рецептов
-# у одного автора (для одного автора выводится 3 рецепта)
     count = author.recipes.count() - 3
     if count < 1:
         return False

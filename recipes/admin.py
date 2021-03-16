@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.db import models
-from recipes.models import Recipe, IngredientRecipe, \
-    Ingredients, FollowRecipe, FollowUser, \
-    ShopingList
 from django.forms import CheckboxSelectMultiple
+
+from recipes.models import (FollowRecipe, FollowUser, IngredientRecipe,
+                            Ingredients, Recipe, ShopingList)
 
 
 class IngredientRecipeInline(admin.TabularInline):

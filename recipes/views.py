@@ -1,19 +1,19 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
-from .forms import RecipeForm
-from django.contrib.auth.decorators import user_passes_test, login_required
-from .models import Ingredients, Recipe, FollowRecipe, \
-    FollowUser, IngredientRecipe, User, ShopingList
-
-from .utils import food_time_filter, get_ingredients
-
-from django.http import JsonResponse, HttpResponse
 from django.db.models import Sum
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+
+from .forms import RecipeForm
+from .models import (FollowRecipe, FollowUser, IngredientRecipe, Ingredients,
+                     Recipe, ShopingList, User)
+from .utils import food_time_filter, get_ingredients
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def add_ingredients(self):
     import json
+
     from django.http import HttpResponse
 
     with open('ingredients.json', 'r', encoding='utf-8') as fh:

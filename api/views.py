@@ -5,14 +5,8 @@ from django.shortcuts import get_object_or_404
 from django.views import View
 from rest_framework.utils import json
 
-
-from recipes.models import (
-    Ingredients,
-    Recipe,
-    FollowRecipe,
-    FollowUser,
-    ShopingList,
-)
+from recipes.models import (FollowRecipe, FollowUser, Ingredients, Recipe,
+                            ShopingList)
 
 
 class Ingredient(LoginRequiredMixin, View):
@@ -61,8 +55,8 @@ class Subscribe(LoginRequiredMixin, View):
 
     def delete(self, request, author_id):
         obj = get_object_or_404(
-            FollowUser, 
-            user__username=request.user.username, 
+            FollowUser,
+            user__username=request.user.username,
             author__id=author_id)
         obj.delete()
         return JsonResponse({'success': True})
@@ -77,8 +71,8 @@ class Purchase(LoginRequiredMixin, View):
 
     def delete(self, request, recipe_id):
         obj = get_object_or_404(
-            ShopingList, 
-            user__username=request.user.username, 
+            ShopingList,
+            user__username=request.user.username,
             recipe__id=recipe_id)
         obj.delete()
         return JsonResponse({'success': True})
