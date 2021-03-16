@@ -31,7 +31,7 @@ def index(request):
         'author').order_by('-pub_date').all()
     recipe_list, food_time = food_time_filter(request, recipe)
 
-    paginator = Paginator(recipe_list, 3)
+    paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(
@@ -158,12 +158,12 @@ def follow_index(request):
         amount = Recipe.objects.filter(author=author.author).count()
         cnt[author.author] = amount
     paginator = Paginator(follow, 3)
-    page_number = request.GET.get("page")
+    page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    return render(request, "follow.html", {
-        "page": page,
-        "paginator": paginator,
-        "cnt": cnt,
+    return render(request, 'follow.html', {
+        'page': page,
+        'paginator': paginator,
+        'cnt': cnt,
     }
     )
 
@@ -215,8 +215,8 @@ def download_card(request):
 
 
 def page_not_found(request, exception):
-    return render(request, "misc/404.html", {"path": request.path}, status=404)
+    return render(request, 'misc/404.html', {'path': request.path}, status=404)
 
 
 def server_error(request):
-    return render(request, "misc/500.html", status=500)
+    return render(request, 'misc/500.html', status=500)
