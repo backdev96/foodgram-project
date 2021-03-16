@@ -11,7 +11,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-
 INSTALLED_APPS = [
     'recipes',
     'users',
@@ -26,6 +25,7 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'rest_framework',
     'api',
+    'about',
 ]
 
 MIDDLEWARE = [
