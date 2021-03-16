@@ -173,7 +173,7 @@ def favorite_index(request):
     recipe = Recipe.objects.select_related('author').filter(
         following_recipe__user__id=request.user.id)
     recipes, food_time = food_time_filter(request, recipe)
-    paginator = Paginator(recipes, 3)
+    paginator = Paginator(recipes, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(request, 'favorite.html', {
