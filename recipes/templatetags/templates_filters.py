@@ -39,7 +39,7 @@ def is_follow(author, user):
 
 @register.filter(name='get_recipes')
 def get_recipes(author):
-    return Recipe.objects.select_related("author").filter(author=author)[:3]
+    return Recipe.objects.select_related('author').filter(author=author)[:3]
 
 
 @register.filter(name='get_count_recipes')

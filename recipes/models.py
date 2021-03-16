@@ -15,11 +15,11 @@ class Ingredients(models.Model):
 
 class IngredientRecipe(models.Model):
     recipe = models.ForeignKey(
-        "Recipe",
+        'Recipe',
         on_delete=models.CASCADE,
         related_name='recipe')
     ingredient = models.ForeignKey(
-        "Ingredients",
+        'Ingredients',
         on_delete=models.CASCADE,
         related_name='ingredient')
     amount = models.IntegerField()
@@ -40,7 +40,7 @@ class Recipe(models.Model):
         null=True)
     description = models.TextField()
     ingredients = models.ManyToManyField(
-        "Ingredients",
+        'Ingredients',
         related_name='recipes',
         through='IngredientRecipe'
     )
