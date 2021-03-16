@@ -6,20 +6,20 @@ from django.views import View
 from rest_framework.utils import json
 
 
-from recipe.models import (
-    Ingredient,
+from recipes.models import (
+    Ingredients,
     Recipe,
-    Favourite,
-    Follow,
-    ShoppingList,
+    FollowRecipe,
+    FollowUser,
+    ShopingList,
 )
 
 
 class Ingredient(LoginRequiredMixin, View):
     def get(self, request):
         text = request.GET['query']
-        ingredients = list(Ingredient.objects.filter(
-            title__icontains=text).values('title', 'unit'))
+        ingredients = list(Ingredients.objects.filter(
+            title__icontains=text).values('title', 'dimension'))
         return JsonResponse(ingredients, safe=False)
 
 
@@ -29,7 +29,7 @@ class Favorites(LoginRequiredMixin, View):
         recipe_id = req.get('id', None)
         if recipe_id:
             recipe = get_object_or_404(Recipe, id=recipe_id)
-            obj, created = Follow.objects.get_or_create(
+            obj, created = FollowRecipe.objects.get_or_create(
                 user=request.user, recipe=recipe
             )
             if created:
@@ -39,7 +39,7 @@ class Favorites(LoginRequiredMixin, View):
 
     def delete(self, request, recipe_id):
         recipe = get_object_or_404(
-            Follow, recipe=recipe_id, user=request.user
+            FollowRecipe, recipe=recipe_id, user=request.user
         )
         recipe.delete()
         return JsonResponse({'success': True})
@@ -51,7 +51,7 @@ class Subscribe(LoginRequiredMixin, View):
         author_id = req.get('id', None)
         if author_id is not None:
             author = get_object_or_404(User, id=author_id)
-            obj, created = Follow.objects.get_or_create(
+            obj, created = FollowUser.objects.get_or_create(
                 user=request.user, author=author
             )
             if created:
@@ -72,12 +72,12 @@ class Purchase(LoginRequiredMixin, View):
     def post(self, request):
         recipe_id = json.loads(request.body)['id']
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        ShoppingList.objects.get_or_create(user=request.user, recipe=recipe)
+        ShopingList.objects.get_or_create(user=request.user, recipe=recipe)
         return JsonResponse({'success': True})
 
     def delete(self, request, recipe_id):
         obj = get_object_or_404(
-            ShoppingList, 
+            ShopingList, 
             user__username=request.user.username, 
             recipe__id=recipe_id)
         obj.delete()

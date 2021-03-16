@@ -3,36 +3,48 @@
 {% load static %}
 {% csrf_token %}
 {% block static %}
-    <link rel="stylesheet" href="{% static 'pages/index.css' %}">
+<link rel='stylesheet' href="{% static 'pages/index.css' %}">
 {% endblock static %}
+{% load user_filters %}
+{% load templates_filters %}
+
+
 
 {% block content %}
-{% include 'includes/nav.html' with index=True %}
+{% include 'nav.html' with index=True %}
 <main class="main container">
         <div class="main__header">
             <h1 class="main__title">Рецепты</h1>
-                {% include 'includes/tags.html' with url=request.path food_time=food_time %}
+                {% include 'tags.html' with url=request.path food_time=food_time %}
         </div>
         <div class='card-list'>
-        <!-- Вывод ленты записей -->
-            {% for recipe in page %}
-                {% include 'includes/recipeCard.html' with recipe=recipe %}
-            {% endfor %}
+            <!-- Вывод ленты записей -->
+                {% for recipe in page %}
+                    {% include 'recipe.html' with recipe=recipe %}
+                {% endfor %}
         </div>
-            {% if page.has_other_pages %}
-                {% include "includes/paginator.html" with items=page paginator=paginator %}
-            {% endif %}
-    
-    </main>
-<script src="{% static 'js/components/MainCards.js' %}"></script>
+        <!-- Вывод паджинатора -->
+        {% if page.has_other_pages %}
+            {% include "paginator.html" with items=page paginator=paginator%}
+        {% endif %}
 
-<script src="{% static 'js/components/Purchases.js' %}"></script>
-
+</main>
+{% include 'footer.html' %}
 <script src="{% static 'js/config/config.js' %}"></script>
+{% if user.is_authenticated %}
+<script src="{% static 'js/components/MainCards.js' %}"></script>
+<script src="{% static 'js/components/Purchases.js' %}"></script>
+<script src="{% static 'js/components/Favorites.js' %}"></script>
 <script src="{% static 'js/components/CardList.js' %}"></script>
 <script src="{% static 'js/components/Header.js' %}"></script>
-
+<script src="{% static 'js/api/Api.js' %}"></script>
+<script src="{% static 'indexAuth.js' %}"></script>
+{% else %}
+<script src="{% static 'js/components/MainCards.js' %}"></script>
+<script src="{% static 'js/components/Purchases.js' %}"></script>
+<script src="{% static 'js/components/CardList.js' %}"></script>
+<script src="{% static 'js/components/Header.js' %}"></script>
 <script src="{% static 'js/api/Api.js' %}"></script>
 <script src="{% static 'indexNotAuth.js' %}"></script>
-</body>
+{% endif %}
 {% endblock %}

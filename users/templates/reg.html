@@ -2,16 +2,16 @@
 {% load user_filters %}
 {% load static %}
 
-{% block title %} Регистрация {% endblock %}
+{% block title %}Registration{% endblock %}
+
 {% block static %}
     <link rel="stylesheet" href="{% static 'pages/form.css' %}">
 {% endblock %}
-
 {% block content %}
-{% include 'includes/nav.html' with signup=True %}
+{% include 'nav.html' with signup=True %}
 <main class="main container">
     <div class="main__header">
-        <h1 class="main__title">Регистрация</h1>
+        <h1 class="main__title">Registration</h1>
     </div>
     <div class="form-container">
         <form class="form" method="post" action="{% url 'signup' %}">
@@ -25,16 +25,20 @@
                                         {% for error in field.errors %}
                                             <span class="form__error">{{ error|escape }}</span>
                                         {% endfor %}
-                                     {% endif %}                   
+                                     {% endif %}
+
+                                   
                                 </div>                
                         </div>
                     {% endfor %}
             
             <div class="form__footer">
-                <button class="button button_style_blue">Зарегистрироваться</button>
+                <button class="button button_style_blue">Create Account</button>
             </div>
         </div>
         </form>
     </div>
+
 </main>
+{% include 'footer.html' %}
 {% endblock %}
