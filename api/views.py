@@ -9,6 +9,11 @@ from recipes.models import (FollowRecipe, FollowUser, Ingredients, Recipe,
                             ShopingList)
 
 
+SUCCESS_RESPONSE = JsonResponse({'success': True})
+BAD_RESPONSE = JsonResponse(
+        {'success': False}, status=400
+    )
+
 class Ingredient(LoginRequiredMixin, View):
     def get(self, request):
         text = request.GET['query']
@@ -27,16 +32,15 @@ class Favorites(LoginRequiredMixin, View):
                 user=request.user, recipe=recipe
             )
             if created:
-                return JsonResponse({'success': True})
+                return SUCCESS_RESPONSE
             return JsonResponse({'success': False})
-        return JsonResponse({'success': False}, status=400)
+        return BAD_RESPONSE
 
     def delete(self, request, recipe_id):
-        recipe = get_object_or_404(
-            FollowRecipe, recipe=recipe_id, user=request.user
-        )
-        recipe.delete()
-        return JsonResponse({'success': True})
+        deleted_favourite = FollowRecipe.objects.filter(
+            recipe=recipe_id, user=request.user
+        ).delete()
+        return SUCCESS_RESPONSE
 
 
 class Subscribe(LoginRequiredMixin, View):
@@ -49,17 +53,15 @@ class Subscribe(LoginRequiredMixin, View):
                 user=request.user, author=author
             )
             if created:
-                return JsonResponse({'success': True})
+                return SUCCESS_RESPONSE
             return JsonResponse({'success': False})
-        return JsonResponse({'success': False}, status=400)
+        return BAD_RESPONSE
 
     def delete(self, request, author_id):
-        obj = get_object_or_404(
-            FollowUser,
+        deleted_subscription = FollowUser.objects.filter(
             user__username=request.user.username,
-            author__id=author_id)
-        obj.delete()
-        return JsonResponse({'success': True})
+            author__id=author_id).delete()
+        return SUCCESS_RESPONSE
 
 
 class Purchase(LoginRequiredMixin, View):
@@ -67,12 +69,10 @@ class Purchase(LoginRequiredMixin, View):
         recipe_id = json.loads(request.body)['id']
         recipe = get_object_or_404(Recipe, id=recipe_id)
         ShopingList.objects.get_or_create(user=request.user, recipe=recipe)
-        return JsonResponse({'success': True})
+        return SUCCESS_RESPONSE
 
     def delete(self, request, recipe_id):
-        obj = get_object_or_404(
-            ShopingList,
+        deleted_purchase = ShopingList.objects.filter(
             user__username=request.user.username,
-            recipe__id=recipe_id)
-        obj.delete()
-        return JsonResponse({'success': True})
+            recipe__id=recipe_id).delete()
+        return SUCCESS_RESPONSE

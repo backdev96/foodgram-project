@@ -5,6 +5,11 @@ from recipes.models import FollowRecipe, FollowUser, Recipe, ShopingList
 register = template.Library()
 
 
+@register.filter
+def addclass(field, css):
+    return field.as_widget(attrs={'class': css})
+
+
 @register.filter(name='get_filter_values')
 def get_filter_values(value):
     return value.getlist('filters')
@@ -56,3 +61,20 @@ def get_count_recipes(author):
         end = 'рецептов'
 
     return f'Еще {count} {end}...'
+
+@register.filter(name='parse_tags')
+def parse_tags(get):
+    return get.getlist('tag')
+
+
+@register.filter(name='set_tag_qs')
+def set_tag_qs(request, tag):
+    new_req = request.GET.copy()
+    tags = new_req.getlist('tag')
+    if tag.title in tags:
+        tags.remove(tag.title)
+    else:
+        tags.append(tag.title)
+
+    new_req.setlist('tag', tags)
+    return new_req.urlencode()

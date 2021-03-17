@@ -120,3 +120,5 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
+
+PAGINATION_PAGE_SIZE = 6

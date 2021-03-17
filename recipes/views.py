@@ -1,14 +1,17 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import RecipeForm
 from .models import (FollowRecipe, FollowUser, IngredientRecipe, Ingredients,
-                     Recipe, ShopingList, User)
-from .utils import food_time_filter, get_ingredients
+                     Recipe, ShopingList, User, Tag)
+from .utils import get_ingredients
+from django.conf import settings
 
+
+TAGS = ['breakfast', 'lunch', 'dinner']
 
 @user_passes_test(lambda u: u.is_superuser)
 def add_ingredients(self):
@@ -27,18 +30,27 @@ def add_ingredients(self):
 
 
 def index(request):
-    recipe = Recipe.objects.select_related(
-        'author').order_by('-pub_date').all()
-    recipe_list, food_time = food_time_filter(request, recipe)
-
-    paginator = Paginator(recipe_list, 6)
+    tags = request.GET.getlist('tag', TAGS)
+    all_tags = Tag.objects.all()
+    recipes = Recipe.objects.filter(
+        tags__title__in=tags
+    ).select_related(
+        'author'
+    ).prefetch_related(
+        'tags'
+    ).distinct()
+    paginator = Paginator(recipes, settings.PAGINATION_PAGE_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
+
     return render(
-        request, 'index.html', {
+        request,
+        'index.html',
+        {
             'page': page,
             'paginator': paginator,
-            'food_time': food_time
+            'tags': tags,
+            'all_tags': all_tags,
         }
     )
 
@@ -170,17 +182,29 @@ def follow_index(request):
 
 @login_required
 def favorite_index(request):
-    recipe = Recipe.objects.select_related('author').filter(
-        following_recipe__user__id=request.user.id)
-    recipes, food_time = food_time_filter(request, recipe)
-    paginator = Paginator(recipes, 6)
+    tags = request.GET.getlist('tag', TAGS)
+    all_tags = Tag.objects.all()
+    recipes = Recipe.objects.filter(
+        following_recipe__user=request.user,
+        tags__title__in=tags
+    ).select_related(
+        'author'
+    ).prefetch_related(
+        'tags'
+    ).distinct()
+    paginator = Paginator(recipes, settings.PAGINATION_PAGE_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    return render(request, 'favorite.html', {
-        'page': page,
-        'paginator': paginator,
-        'food_time': food_time,
-    }
+
+    return render(
+        request,
+        'favorite.html',
+        {
+            'page': page,
+            'paginator': paginator,
+            'tags': tags,
+            'all_tags': all_tags,
+        }
     )
 
 
@@ -200,7 +224,11 @@ def download_card(request):
     ingredients = recipes.values(
         'ingredients__title', 'ingredients__dimension'
     ).annotate(
+        name=F('ingredients__title'),
+        units=F('ingredients__dimension'),
         total_amount=Sum('recipe__amount')
+    ).order_by(
+        ('-total_amount')
     )
     file_data = ''
     for item in ingredients:

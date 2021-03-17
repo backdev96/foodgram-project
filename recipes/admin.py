@@ -3,7 +3,7 @@ from django.db import models
 from django.forms import CheckboxSelectMultiple
 
 from recipes.models import (FollowRecipe, FollowUser, IngredientRecipe,
-                            Ingredients, Recipe, ShopingList)
+                            Ingredients, Recipe, ShopingList, Tag)
 
 
 class IngredientRecipeInline(admin.TabularInline):
@@ -12,13 +12,20 @@ class IngredientRecipeInline(admin.TabularInline):
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('author', 'title', 'pub_date', 'description')
-    search_fields = ('decsription',)
-    list_filter = ('pub_date',)
-    inlines = (IngredientRecipeInline,)
-    formfield_overrides = {
-        models.ManyToManyField: {'widget': CheckboxSelectMultiple},
-    }
+    list_display = (
+        'id', 'title', 'author',
+        'cooking_time', 'get_favorite_count', 'pub_date'
+    )
+    list_filter = ('author', 'tags__title')
+    search_fields = ('title', 'author__username')
+    ordering = ('-pub_date', )
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.annotate(favorite_count=Count('favored_by'))
+
+    def get_favorite_count(self, obj):
+        return obj.favorite_count
 
 
 admin.site.register(Recipe, RecipeAdmin)
@@ -60,3 +67,10 @@ class FlRecAdmin(admin.ModelAdmin):
 
 
 admin.site.register(FollowRecipe, FlRecAdmin)
+
+
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('title', 'colour', 'display_name')
+    list_filter = ('title', )
+
+admin.site.register(Tag, TagAdmin)
