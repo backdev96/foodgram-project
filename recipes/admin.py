@@ -70,7 +70,7 @@ admin.site.register(FollowRecipe, FlRecAdmin)
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('title', 'color', 'display_name')
+    list_display = ('title', 'colour', 'display_name')
     list_filter = ('title', )
 
 

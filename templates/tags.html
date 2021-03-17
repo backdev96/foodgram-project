@@ -5,7 +5,7 @@
     <li class="tags__item">
       <a
         id="{{ tag.title }}"
-        class="tags__checkbox tags__checkbox_style_{{ tag.color }} 
+        class="tags__checkbox tags__checkbox_style_{{ tag.colour }} 
         {% if tag.title in request.GET|parse_tags %}tags__checkbox_active{% endif %}"
         href="{{ request.path }}?{{ request|set_tag_qs:tag}}">
       </a>
