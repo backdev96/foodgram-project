@@ -62,6 +62,7 @@ def get_count_recipes(author):
 
     return f'Еще {count} {end}...'
 
+
 @register.filter(name='parse_tags')
 def parse_tags(get):
     return get.getlist('tag')

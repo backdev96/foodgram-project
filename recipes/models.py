@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.db import models
 from django.core.validators import MinValueValidator
+from django.db import models
 
 User = get_user_model()
 
@@ -8,7 +8,7 @@ User = get_user_model()
 class Tag(models.Model):
     title = models.CharField('Имя тега', max_length=50, db_index=True)
     display_name = models.CharField('Имя тега для шаблона', max_length=50)
-    colour = models.CharField('Цвет тега', max_length=50)
+    color = models.CharField('Цвет тега', max_length=50)
 
     class Meta:
         verbose_name = 'Тег'
@@ -21,6 +21,7 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class Ingredients(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)
@@ -49,7 +50,6 @@ class IngredientRecipe(models.Model):
         verbose_name='Количество',
         default=0,
     )
-
 
     def __str__(self):
         return str(self.amount)
@@ -83,7 +83,7 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(
         'Tag',
         related_name='recipes',
-        verbose_name = 'Теги'
+        verbose_name='Теги'
     )
 
     class Meta:
@@ -107,7 +107,7 @@ class FollowRecipe(models.Model):
 
     def __str__(self):
         return f'follower - {self.user} following recipe - {self.recipe}'
-    
+  
     class Meta:
         verbose_name = 'Любимый рецепт'
         verbose_name_plural = 'Любимые рецепты'

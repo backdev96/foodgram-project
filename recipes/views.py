@@ -1,17 +1,17 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
-from django.db.models import Sum, F
+from django.db.models import F, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import RecipeForm
-from .models import (FollowRecipe, FollowUser, IngredientRecipe, Ingredients,
-                     Recipe, ShopingList, User, Tag)
+from .models import (FollowUser, IngredientRecipe, Ingredients,
+                     Recipe, ShopingList, Tag, User)
 from .utils import get_ingredients
-from django.conf import settings
-
 
 TAGS = ['breakfast', 'lunch', 'dinner']
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def add_ingredients(self):
@@ -56,23 +56,29 @@ def index(request):
 
 
 def profile(request, username):
-    recipe_author = get_object_or_404(User, username=username)
+    tags = request.GET.getlist('tag', TAGS)
+    all_tags = Tag.objects.all()
 
-    recipe = Recipe.objects.select_related('author').filter(
-        author=recipe_author).order_by('-pub_date').all()
+    author = get_object_or_404(User, username=username)
+    author_recipes = author.recipes.filter(
+        tags__title__in=tags
+    ).prefetch_related('tags').distinct()
 
-    recipe_list, food_time = food_time_filter(request, recipe)
-    paginator = Paginator(recipe_list, 3)
+    paginator = Paginator(author_recipes, settings.PAGINATION_PAGE_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    return render(request, 'authorRecipe.html',
-                  {
-                      'page': page,
-                      'paginator': paginator,
-                      'username': recipe_author,
-                      'food_time': food_time,
-                  }
-                  )
+
+    return render(
+        request,
+        'authorRecipe.html',
+        {
+            'author': author,
+            'page': page,
+            'paginator': paginator,
+            'tags': tags,
+            'all_tags': all_tags,
+        }
+    )
 
 
 def recipe_view(request, recipe_id, username):

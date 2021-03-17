@@ -15,13 +15,14 @@ class RecipeForm(forms.ModelForm):
         )
         if not ingredients:
             raise forms.ValidationError('Отсутствуют ингредиенты')
-    
+
     class Meta:
         model = Recipe
         fields = [
             'title',
             'tags',
             'image',
+            'ingredients',
             'description',
             'cooking_time']
         widgets = {

@@ -8,7 +8,6 @@ from rest_framework.utils import json
 from recipes.models import (FollowRecipe, FollowUser, Ingredients, Recipe,
                             ShopingList)
 
-
 SUCCESS_RESPONSE = JsonResponse({'success': True})
 BAD_RESPONSE = JsonResponse(
         {'success': False}, status=400
