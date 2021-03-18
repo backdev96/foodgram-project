@@ -6,9 +6,9 @@ User = get_user_model()
 
 
 class Tag(models.Model):
-    title = models.CharField('Имя тега', max_length=50, db_index=True)
-    display_name = models.CharField('Имя тега для шаблона', max_length=50)
-    colour = models.CharField('Цвет тега', max_length=50)
+    title = models.CharField('Tag name', max_length=50, db_index=True)
+    display_name = models.CharField('Tag name for template', max_length=50)
+    colour = models.CharField('Tag colour', max_length=50)
 
     class Meta:
         verbose_name = 'Тег'
@@ -69,18 +69,18 @@ class Recipe(models.Model):
         through='IngredientRecipe'
     )
     cooking_time = models.PositiveSmallIntegerField(
-        verbose_name='Время приготовления',
-        help_text='в минутах',
+        verbose_name='Cooking time',
+        help_text='in minutes',
         null=True,
         validators=[MinValueValidator(1)]
     )
     pub_date = models.DateTimeField(
-        'date published',
+        'Date published',
         auto_now_add=True)
     tags = models.ManyToManyField(
         'Tag',
         related_name='recipes',
-        verbose_name='Теги'
+        verbose_name='Tags'
     )
 
     class Meta:

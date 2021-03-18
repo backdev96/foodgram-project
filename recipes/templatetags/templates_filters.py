@@ -79,3 +79,8 @@ def set_tag_qs(request, tag):
 
     new_req.setlist('tag', tags)
     return new_req.urlencode()
+
+
+@register.simple_tag(takes_context=True)
+def get_purchases_count(context, **kwargs):
+    return ShopingList.objects.filter(user=context['request'].user).count()
