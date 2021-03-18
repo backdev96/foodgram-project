@@ -38,21 +38,6 @@ class Ingredients(models.Model):
         return f'{self.title} {self.dimension}'
 
 
-class IngredientRecipe(models.Model):
-    recipe = models.ForeignKey(
-        'Recipe',
-        on_delete=models.CASCADE,
-        related_name='recipe')
-    ingredient = models.ForeignKey(
-        'Ingredients',
-        on_delete=models.CASCADE,
-        related_name='ingredient')
-    amount = models.PositiveIntegerField()
-
-    def __str__(self):
-        return str(self.amount)
-
-
 class Recipe(models.Model):
     author = models.ForeignKey(
         User,
@@ -65,7 +50,7 @@ class Recipe(models.Model):
         null=True)
     description = models.TextField()
     ingredients = models.ManyToManyField(
-        'Ingredients',
+        Ingredients,
         related_name='recipes',
         through='IngredientRecipe'
     )
@@ -91,6 +76,21 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class IngredientRecipe(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipe')
+    ingredient = models.ForeignKey(
+        Ingredients,
+        on_delete=models.CASCADE,
+        related_name='ingredient')
+    amount = models.PositiveIntegerField()
+
+    def __str__(self):
+        return str(self.amount)
 
 
 class FollowRecipe(models.Model):

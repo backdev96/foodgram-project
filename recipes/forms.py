@@ -14,7 +14,7 @@ class RecipeForm(forms.ModelForm):
             ),
         )
         if not ingredients:
-            raise forms.ValidationError('Отсутствуют ингредиенты')
+            raise forms.ValidationError('Missing ingredients!')
 
     class Meta:
         model = Recipe
