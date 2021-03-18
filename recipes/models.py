@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import F, Q
 
 User = get_user_model()
 
@@ -111,7 +112,7 @@ class FollowRecipe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
-                name='unique_favorite'
+                name='favourite'
             ),
         ]
 
@@ -139,15 +140,15 @@ class FollowUser(models.Model):
         return f'follower - {self.user} following - {self.author}'
 
 
-class ShopingList(models.Model):
+class ShoppingList(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='user_shoping_list')
+        related_name='user_shopping_list')
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='recipe_shoping_list')
+        related_name='recipe_shopping_list')
 
     class Meta:
         verbose_name = 'Список покупок'
@@ -156,4 +157,8 @@ class ShopingList(models.Model):
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
                 name='unique_shoppinglist'
+            ),
+            models.CheckConstraint(
+                check=~Q(user=F('recipe')),
+                name='recipe_not_repeat',
             )]

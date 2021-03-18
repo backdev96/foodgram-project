@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models import Count
 
 from recipes.models import (FollowRecipe, FollowUser, IngredientRecipe,
-                            Ingredients, Recipe, ShopingList, Tag)
+                            Ingredients, Recipe, ShoppingList, Tag)
 
 
 class IngredientRecipeInline(admin.TabularInline):
@@ -14,7 +14,7 @@ class IngredientRecipeInline(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'title', 'author',
-        'cooking_time', 'get_favorite_count', 'pub_date'
+        'cooking_time', 'get_favourite_count', 'pub_date'
     )
     list_filter = ('author', 'tags__title')
     search_fields = ('title', 'author__username')
@@ -22,10 +22,10 @@ class RecipeAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        return queryset.annotate(favorite_count=Count('following_recipe'))
+        return queryset.annotate(favourite_count=Count('following_recipe'))
 
-    def get_favorite_count(self, obj):
-        return obj.favorite_count
+    def get_favourite_count(self, obj):
+        return obj.favourite_count
 
 
 admin.site.register(Recipe, RecipeAdmin)
@@ -42,13 +42,13 @@ class IngredientsAdmin(admin.ModelAdmin):
 admin.site.register(Ingredients, IngredientsAdmin)
 
 
-class ShopingListAdmin(admin.ModelAdmin):
+class ShoppingListAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
     list_filter = ('user',)
     search_fields = ('user',)
 
 
-admin.site.register(ShopingList, ShopingListAdmin)
+admin.site.register(ShoppingList, ShoppingListAdmin)
 
 
 class FlUsAdmin(admin.ModelAdmin):

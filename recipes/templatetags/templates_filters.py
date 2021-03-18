@@ -1,6 +1,6 @@
 from django import template
 
-from recipes.models import FollowRecipe, FollowUser, Recipe, ShopingList
+from recipes.models import FollowRecipe, FollowUser, Recipe, ShoppingList
 
 register = template.Library()
 
@@ -29,11 +29,11 @@ def get_filter_link(request, tag):
 
 @register.filter(name='is_shop')
 def is_shop(recipe, user):
-    return ShopingList.objects.filter(user=user, recipe=recipe).exists()
+    return ShoppingList.objects.filter(user=user, recipe=recipe).exists()
 
 
-@register.filter(name='is_favorite')
-def is_favorite(recipe, user):
+@register.filter(name='is_favourite')
+def is_favourite(recipe, user):
     return FollowRecipe.objects.filter(user=user, recipe=recipe).exists()
 
 
@@ -83,4 +83,4 @@ def set_tag_qs(request, tag):
 
 @register.simple_tag(takes_context=True)
 def get_purchases_count(context, **kwargs):
-    return ShopingList.objects.filter(user=context['request'].user).count()
+    return ShoppingList.objects.filter(user=context['request'].user).count()

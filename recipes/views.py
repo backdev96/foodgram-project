@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import RecipeForm
 from .models import (FollowUser, IngredientRecipe, Ingredients,
-                     Recipe, ShopingList, Tag, User)
+                     Recipe, ShoppingList, Tag, User)
 from .utils import get_ingredients
 
 TAGS = ['breakfast', 'lunch', 'dinner']
@@ -70,7 +70,7 @@ def profile(request, username):
 
     return render(
         request,
-        'authorRecipe.html',
+        'author_recipe.html',
         {
             'author': author,
             'page': page,
@@ -85,36 +85,31 @@ def recipe_view(request, recipe_id, username):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     username = get_object_or_404(User, username=username)
     ingredients = IngredientRecipe.objects.filter(recipe=recipe)
-    return render(request, 'singlePage.html', {'username': username, 'recipe': recipe, 'ingredients': ingredients})
+    return render(request, 'single_page.html', {'username': username, 'recipe': recipe, 'ingredients': ingredients})
 
 
 @login_required
 def new_recipe(request):
     user = User.objects.get(username=request.user)
-
-    if request.method == 'POST':
-        ingr = get_ingredients(request)
+    form = RecipeForm()
+    if request.method == 'POST' and form.is_valid():
         form = RecipeForm(request.POST or None, files=request.FILES or None)
-        if not ingr:
-            form.add_error(None, 'Добавьте ингредиенты')
-
-        elif form.is_valid():
-            recipe = form.save(commit=False)
-            recipe.author = user
-            recipe.save()
-            for ingr_name, amount in ingr.items():
-                ingr_obj = get_object_or_404(Ingredients, title=ingr_name)
-                ingr_recipe = IngredientRecipe(
-                    ingredient=ingr_obj,
-                    recipe=recipe,
-                    amount=amount,
-                )
-                ingr_recipe.save()
-            form.save_m2m()
-            return redirect('index')
+        recipe = form.save(commit=False)
+        recipe.author = user
+        recipe.save()
+        for ingr_name, amount in ingr.items():
+            ingr_obj = get_object_or_404(Ingredients, title=ingr_name)
+            ingr_recipe = IngredientRecipe(
+                ingredient=ingr_obj,
+                recipe=recipe,
+                amount=amount,
+            )
+            ingr_recipe.save()
+        form.save_m2m()
+        return redirect('index')
     else:
         form = RecipeForm()
-    return render(request, 'formRecipe.html', {'form': form})
+    return render(request, 'form_recipe.html', {'form': form})
 
 
 @login_required
@@ -144,10 +139,10 @@ def recipe_edit(request, username, recipe_id):
             return redirect('index')
 
     form = RecipeForm(request.POST or None,
-                      files=request.FILES or None, instance=recipe)
+                      files=request.FILES or None)
 
     return render(request, 'recipe_edit.html',
-                  {'form': form, 'recipe': recipe, })
+                  {'form': form, 'recipe': recipe})
 
 
 @login_required
@@ -175,7 +170,7 @@ def follow_index(request):
     for author in follow:
         amount = Recipe.objects.filter(author=author.author).count()
         cnt[author.author] = amount
-    paginator = Paginator(follow, 3)
+    paginator = Paginator(follow, settings.PAGINATION_PAGE_SIZE_FOR_FOLLOW)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(request, 'follow.html', {
@@ -187,7 +182,7 @@ def follow_index(request):
 
 
 @login_required
-def favorite_index(request):
+def favourite_index(request):
     tags = request.GET.getlist('tag', TAGS)
     all_tags = Tag.objects.all()
     recipes = Recipe.objects.filter(
@@ -204,7 +199,7 @@ def favorite_index(request):
 
     return render(
         request,
-        'favorite.html',
+        'favourite.html',
         {
             'page': page,
             'paginator': paginator,
@@ -216,7 +211,7 @@ def favorite_index(request):
 
 @login_required
 def shopping_list(request):
-    shopping_list = ShopingList.objects.filter(user=request.user).all()
+    shopping_list = ShoppingList.objects.filter(user=request.user).all()
     return render(
         request,
         'shopping_list.html',
@@ -226,7 +221,7 @@ def shopping_list(request):
 
 @login_required
 def download_card(request):
-    recipes = Recipe.objects.filter(recipe_shoping_list__user=request.user)
+    recipes = Recipe.objects.filter(recipe_shopping_list__user=request.user)
     ingredients = recipes.values(
         'ingredients__title', 'ingredients__dimension'
     ).annotate(

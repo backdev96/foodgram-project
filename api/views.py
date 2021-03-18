@@ -6,7 +6,7 @@ from django.views import View
 from rest_framework.utils import json
 
 from recipes.models import (FollowRecipe, FollowUser, Ingredients, Recipe,
-                            ShopingList)
+                            ShoppingList)
 
 SUCCESS_RESPONSE = JsonResponse({'success': True})
 BAD_RESPONSE = JsonResponse(
@@ -67,11 +67,11 @@ class Purchase(LoginRequiredMixin, View):
     def post(self, request):
         recipe_id = json.loads(request.body)['id']
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        ShopingList.objects.get_or_create(user=request.user, recipe=recipe)
+        ShoppingList.objects.get_or_create(user=request.user, recipe=recipe)
         return SUCCESS_RESPONSE
 
     def delete(self, request, recipe_id):
-        deleted_purchase = ShopingList.objects.filter(
+        deleted_purchase = ShoppingList.objects.filter(
             user__username=request.user.username,
             recipe__id=recipe_id).delete()
         return SUCCESS_RESPONSE
