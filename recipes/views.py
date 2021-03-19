@@ -6,9 +6,9 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import RecipeForm
-from .models import (FollowUser, IngredientRecipe, Ingredients,
+from .models import (FollowUser, IngredientRecipe, Ingredient,
                      Recipe, ShoppingList, Tag, User)
-from .utils import get_ingredients
+
 
 TAGS = ['breakfast', 'lunch', 'dinner']
 
@@ -91,14 +91,14 @@ def recipe_view(request, recipe_id, username):
 @login_required
 def new_recipe(request):
     user = User.objects.get(username=request.user)
-    form = RecipeForm()
+    form = RecipeForm(request.POST or None, files=request.FILES or None)
     if request.method == 'POST' and form.is_valid():
-        form = RecipeForm(request.POST or None, files=request.FILES or None)
         recipe = form.save(commit=False)
         recipe.author = user
         recipe.save()
-        for ingr_name, amount in ingr.items():
-            ingr_obj = get_object_or_404(Ingredients, title=ingr_name)
+        ingr = recipe.ingredient.all()
+        for ingr_name, amount in ingr:
+            ingr_obj = get_object_or_404(Ingredient, title=ingr_name)
             ingr_recipe = IngredientRecipe(
                 ingredient=ingr_obj,
                 recipe=recipe,
@@ -123,7 +123,6 @@ def recipe_edit(request, username, recipe_id):
         form = RecipeForm(request.POST or None,
                           files=request.FILES or None, instance=recipe
                           )
-        ingredients = get_ingredients(request)
         if form.is_valid():
             IngredientRecipe.objects.filter(recipe=recipe).delete()
             recipe = form.save(commit=False)
@@ -132,7 +131,7 @@ def recipe_edit(request, username, recipe_id):
             for item in ingredients:
                 IngredientRecipe.objects.create(
                     amount=ingredients[item],
-                    ingredient=Ingredients.objects.get(title=f'{item}'),
+                    ingredient=Ingredient.objects.get(name=f'{item}'),
                     recipe=recipe
                 )
             form.save_m2m()
@@ -182,7 +181,7 @@ def follow_index(request):
 
 
 @login_required
-def favourite_index(request):
+def favorite_index(request):
     tags = request.GET.getlist('tag', TAGS)
     all_tags = Tag.objects.all()
     recipes = Recipe.objects.filter(
@@ -199,7 +198,7 @@ def favourite_index(request):
 
     return render(
         request,
-        'favourite.html',
+        'favorite.html',
         {
             'page': page,
             'paginator': paginator,
@@ -223,10 +222,10 @@ def shopping_list(request):
 def download_card(request):
     recipes = Recipe.objects.filter(recipe_shopping_list__user=request.user)
     ingredients = recipes.values(
-        'ingredients__title', 'ingredients__dimension'
+        'ingredient__title', 'ingredient__dimension'
     ).annotate(
-        name=F('ingredients__title'),
-        units=F('ingredients__dimension'),
+        title=F('ingredient__title'),
+        dimension=F('ingredient__dimension'),
         total_amount=Sum('recipe__amount')
     ).order_by(
         ('-total_amount')

@@ -22,7 +22,6 @@ class RecipeForm(forms.ModelForm):
             'title',
             'tags',
             'image',
-            'ingredients',
             'description',
             'cooking_time']
         widgets = {

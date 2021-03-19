@@ -24,7 +24,7 @@ class Tag(models.Model):
         return self.title
 
 
-class Ingredients(models.Model):
+class Ingredient(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)
     dimension = models.CharField(max_length=200, null=True, blank=True)
     description = models.TextField(max_length=200, blank=True, null=True)
@@ -35,7 +35,7 @@ class Ingredients(models.Model):
         verbose_name_plural = "Ингридиенты"
 
     def __str__(self):
-        return f'{self.title} {self.dimension}'
+        return f'{self.title} {self.unit}'
 
 
 class Recipe(models.Model):
@@ -49,8 +49,8 @@ class Recipe(models.Model):
         blank=True,
         null=True)
     description = models.TextField()
-    ingredients = models.ManyToManyField(
-        Ingredients,
+    ingredient = models.ManyToManyField(
+        Ingredient,
         related_name='recipes',
         through='IngredientRecipe'
     )
@@ -84,7 +84,7 @@ class IngredientRecipe(models.Model):
         on_delete=models.CASCADE,
         related_name='recipe')
     ingredient = models.ForeignKey(
-        Ingredients,
+        Ingredient,
         on_delete=models.CASCADE,
         related_name='ingredient')
     amount = models.PositiveIntegerField()
@@ -112,7 +112,7 @@ class FollowRecipe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
-                name='favourite'
+                name='favorite'
             ),
         ]
 
@@ -128,6 +128,7 @@ class FollowUser(models.Model):
         related_name='following')
 
     class Meta:
+        ordering = ('user',)
         verbose_name = 'Подписка на автора'
         verbose_name_plural = 'Подписки на авторов'
         constraints = [
@@ -160,5 +161,5 @@ class ShoppingList(models.Model):
             ),
             models.CheckConstraint(
                 check=~Q(user=F('recipe')),
-                name='recipe_not_repeat',
+                name='recipe_do_not_repeat',
             )]

@@ -32,8 +32,8 @@ def is_shop(recipe, user):
     return ShoppingList.objects.filter(user=user, recipe=recipe).exists()
 
 
-@register.filter(name='is_favourite')
-def is_favourite(recipe, user):
+@register.filter(name='is_favorite')
+def is_favorite(recipe, user):
     return FollowRecipe.objects.filter(user=user, recipe=recipe).exists()
 
 

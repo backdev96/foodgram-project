@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.views import View
 from rest_framework.utils import json
 
-from recipes.models import (FollowRecipe, FollowUser, Ingredients, Recipe,
+from recipes.models import (FollowRecipe, FollowUser, Ingredient, Recipe,
                             ShoppingList)
 
 SUCCESS_RESPONSE = JsonResponse({'success': True})
@@ -13,10 +13,10 @@ BAD_RESPONSE = JsonResponse(
         {'success': False}, status=400
     )
 
-class Ingredient(LoginRequiredMixin, View):
+class Ingredients(LoginRequiredMixin, View):
     def get(self, request):
         text = request.GET['query']
-        ingredients = list(Ingredients.objects.filter(
+        ingredients = list(Ingredient.objects.filter(
             title__icontains=text).values('title', 'dimension'))
         return JsonResponse(ingredients, safe=False)
 
