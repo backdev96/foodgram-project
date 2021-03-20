@@ -1,24 +1,30 @@
 # Project Title
 
-Application "Grocery Assistant": a site where users can publish their recipes, subscribe to other authors, add their recipes to favourites. Service "Shopping List" allows users to create a list of products required to cook selected meals.
+Application "Grocery Assistant" is a site where users can publish their recipes, subscribe to other authors, add their recipes to favourites. Service "Shopping List" allows users to create a list of products required to cook selected meals.
+
+![foodgram-project workflow](https://github.com/backdev96/foodgram-project/workflows/foodgram/badge.svg)(https://github.com/backdev96/foodgram-project/actions)
+
+Site
+
+    to be added
 
 ## Getting Started
 
 These instructions will get you a copy of the project and run it on your local machine for development and testing purposes. 
 
-### Prerequisites
+### Installing
 
-What things you need to install the software and how to install them
+Things you need to install the software and how to install them:
 
-- Clone the repository:
+- clone the repository:
 
     git clone https://github.com/backdev96/foodgram-project
 
-- Activate the virtual environment and install all required packages.
+- activate the virtual environment and install all required packages.
     
-    1) source venv/bin/activate
+    source venv/bin/activate
 
-    2) pip3 install -r requirements.txt
+    pip3 install -r requirements.txt
 
 ### Installing
 
@@ -31,13 +37,6 @@ pip install -r requirements.txt.
 
 The project uses a workflow file yamdb_workflow.yaml for automated testing after the git push command.
 
-# go-rest-service-example
-
-![yamdb_workflow](https://github.com/backdev96/foodgram-project/workflows/foodgram/badge.svg)
-
-Site
-
- to be added
 
 ## Deployment
 
