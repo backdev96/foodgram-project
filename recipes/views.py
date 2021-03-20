@@ -24,7 +24,7 @@ def add_ingredients(self):
 
     for i in data:
         print('You added this new ingredient:', i)
-        ingredient = Ingredients(title=i['title'], dimension=i['dimension'])
+        ingredient = Ingredient(title=i['title'], dimension=i['dimension'])
         ingredient.save()
     return HttpResponse('\n'.join(str(data)))
 
