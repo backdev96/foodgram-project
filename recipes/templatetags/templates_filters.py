@@ -84,3 +84,9 @@ def set_tag_qs(request, tag):
 @register.simple_tag(takes_context=True)
 def get_purchases_count(context, **kwargs):
     return ShoppingList.objects.filter(user=context['request'].user).count()
+
+
+@register.filter(name='count_purchase')
+def count_purchase(user):
+    '''Подсчет количества рецептов в списке покупок'''
+    return ShoppingList.objects.filter(user_id=user.id).count()

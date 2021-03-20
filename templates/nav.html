@@ -8,9 +8,8 @@
                   <li class="nav__item {% if new_recipe %} nav__item_active {% endif %}"><a href="{% url 'new_recipe' %}" class="nav__link link">Создать рецепт</a></li>
                   <li class="nav__item {% if favorite %} nav__item_active {% endif %}"><a href="{% url 'favorite' %}" class="nav__link link">Избранное</a></li>
                   {% load templates_filters %}
-
                   <li class="nav__item {% if purchases %}nav__item_active{% endif %}"><a href="{% url 'shopping-list' %}" class="nav__link link">Список покупок</a>
-                    <span class="badge badge_style_blue nav__badge" id="counter">{% get_purchases_count %}</span>
+                    <span class="badge badge_style_blue nav__badge" id="counter">{% if request.user|count_purchase %}{{ request.user|count_purchase }}{% endif %}</span>
                   </li>
               </ul>
               <ul class="nav__items list">
