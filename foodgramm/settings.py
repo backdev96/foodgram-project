@@ -1,17 +1,27 @@
 import os
 import environ
-env = environ.Env()
-environ.Env.read_env()
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+
+sentry_sdk.init(
+    dsn="https://d9276c50f3034b39b023d52a0d955cc2@o555629.ingest.sentry.io/5685636",
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=1.0,
+    send_default_pii=True
+)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY = 'ef5x!n1*r+ascb)d08o^k+d^!7os^cqace2u2v_5ta5(s$e_bz'
 
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['84.201.132.63', 'localhost', ]
 
 
 INSTALLED_APPS = [
@@ -63,9 +73,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgramm.wsgi.application'
 
-
 DATABASES = {
-    'default': env.db(),
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
