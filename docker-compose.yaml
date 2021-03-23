@@ -16,6 +16,7 @@ services:
      - ./.env
 
   web:
+    build: .
     container_name: foodgram
     image: 'praktikumdocker/foodgram:latest'
     restart: always
