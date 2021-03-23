@@ -13,8 +13,7 @@ class IngredientRecipeInline(admin.TabularInline):
 
 class RecipesAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'title', 'author',
-        'cooking_time', 'get_favorite_count', 'pub_date'
+        'title', 'author', 'get_favorite_count'
     )
     list_filter = ('author', 'tags__title')
     search_fields = ('title', 'author__username')
@@ -32,8 +31,7 @@ admin.site.register(Recipe, RecipesAdmin)
 
 
 class IngredientsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'dimension',
-                    'description')
+    list_display = ('title', 'dimension')
     list_filter = ('title',)
     search_fields = ('title',)
     inlines = (IngredientRecipeInline,)
@@ -60,7 +58,7 @@ class FlUsAdmin(admin.ModelAdmin):
     search_fields = ('user',)
 
 
-admin.site.register(FollowUser, FlUsAdmin)
+admin.site.register(FollowUser)
 
 
 class FlRecAdmin(admin.ModelAdmin):
@@ -72,7 +70,7 @@ class FlRecAdmin(admin.ModelAdmin):
     search_fields = ('recipe',)
 
 
-admin.site.register(FollowRecipe, FlRecAdmin)
+admin.site.register(FollowRecipe)
 
 
 class TagAdmin(admin.ModelAdmin):

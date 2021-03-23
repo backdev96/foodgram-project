@@ -34,7 +34,7 @@
                                         value="{{ tag.pk }}"
                                         id="id_tags_{{ forloop.counter }}"
                                         class="tags__checkbox tags__checkbox_style_{{ tag.colour }}"
-                                        {% if tag in recipe.tags.all %}checked=""{% endif %}>
+                                        {% if tag in form.instance.tags.all %}checked=""{% endif %}>
                                 <label for="id_tags_{{ forloop.counter }}" class="tags__label">{{ tag.get_name_display }}</label>
                             </div>
                         {% endfor %}
@@ -60,7 +60,7 @@
                     <div class="form__field-group-ingredientes-container">
                         {% for in in ingr %}
                             <div class="form__field-item-ingredient" id="{{ in.pk }}">
-                                <span>{{ in.ingredient.title }} {{ in.amount }}{{ in.ingredient.dimension }}</span>
+                                <span>{{ in.ingredient.title }} {{ in.ingredient.amount }}{{ in.ingredient.dimension }}</span>
                                 <span class="form__field-item-delete" ></span>
                                 <input id="nameIngredient_{{ in.pk }}" name="nameIngredient_{{ in }}" type="hidden" value="{{ in.ingredient.title }}">
                                 <input id="valueIngredient_{{ in.pk }}" name="valueIngredient_{{ in }}" type="hidden" value="{{ in.amount }}">

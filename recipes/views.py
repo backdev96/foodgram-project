@@ -23,7 +23,6 @@ def add_ingredients(self):
         data = json.load(fh)
 
     for i in data:
-        print('You added this new ingredient:', i)
         ingredient = Ingredient(title=i['title'], dimension=i['dimension'])
         ingredient.save()
     return HttpResponse('\n'.join(str(data)))
@@ -115,7 +114,7 @@ def new_recipe(request):
 @login_required
 def recipe_edit(request, username, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
-
+    ingr = recipe.ingredient.all()
     if request.user != recipe.author:
         return redirect('index')
 
@@ -128,7 +127,7 @@ def recipe_edit(request, username, recipe_id):
             recipe = form.save(commit=False)
             recipe.author = request.user
             recipe.save()
-            for item in ingredients:
+            for item in ingr:
                 IngredientRecipe.objects.create(
                     amount=ingredients[item],
                     ingredient=Ingredient.objects.get(name=f'{item}'),
@@ -137,11 +136,10 @@ def recipe_edit(request, username, recipe_id):
             form.save_m2m()
             return redirect('index')
 
-    form = RecipeForm(request.POST or None,
-                      files=request.FILES or None)
+    form =  RecipeForm(request.POST, files=request.FILES, instance=recipe)
 
     return render(request, 'recipe_edit.html',
-                  {'form': form, 'recipe': recipe})
+                  {'form': form})
 
 
 @login_required
@@ -154,12 +152,6 @@ def recipe_delete(request, username, recipe_id):
         if recipe.author == author == user or user.is_superuser:
             recipe.delete()
         return redirect('index')
-    else:
-        return render(request, 'recipe_delete.html', {
-            'recipe_id': recipe_id,
-            'username': username,
-            'recipe': recipe,
-        })
 
 
 @login_required

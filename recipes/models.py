@@ -135,7 +135,11 @@ class FollowUser(models.Model):
             models.UniqueConstraint(
                 fields=['user', 'author'],
                 name='unique_subscription'
-            )]
+            ),
+            models.CheckConstraint(
+                check=~Q(user=F('author')),
+                name='check_user_is_not_author')
+            ]
 
     def __str__(self):
         return f'follower - {self.user} following - {self.author}'
@@ -158,8 +162,4 @@ class ShoppingList(models.Model):
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
                 name='unique_shoppinglist'
-            ),
-            models.CheckConstraint(
-                check=~Q(user=F('recipe')),
-                name='recipe_do_not_repeat',
             )]

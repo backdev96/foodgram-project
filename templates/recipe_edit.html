@@ -34,7 +34,7 @@
                                         value="{{ tag.pk }}"
                                         id="id_tags_{{ forloop.counter }}"
                                         class="tags__checkbox tags__checkbox_style_{{ tag.colour }}"
-                                        {% if tag in recipe.tags.all %}checked=""{% endif %}>
+                                        {% if tag in form.instance.tags.all %}checked=""{% endif %}>
                                 <label for="id_tags_{{ forloop.counter }}" class="tags__label">{{ tag.get_name_display }}</label>
                             </div>
                         {% endfor %}
@@ -103,7 +103,7 @@
             <div class="form__footer">
           
             
-                <button class="button button_style_blue">Сохранить</button> <a style="margin-left: 2.5em" href="{% url 'recipe_delete' username=recipe.author.username recipe_id=recipe.id %}" class="form__ingredient-link">Удалить</a>
+                <button class="button button_style_blue">Сохранить</button> <a style="margin-left: 2.5em" href="{% url 'recipe_delete' username=form.instance.author.username recipe_id=form.instance.pk %}" class="form__ingredient-link">Удалить</a>
         
             </div>
         </form>
