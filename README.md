@@ -6,7 +6,7 @@ Application "Grocery Assistant" is a site where users can publish their recipes,
 
 Site
 
-    to be added
+    84.252.128.238
 
 ## Getting Started
 
@@ -47,7 +47,7 @@ docker build -t name .
 The dot at the end of the command is the path to the dockerfile from which to build.
 When the build is complete, run the container: 
 ```
-docker run -it -p 8000: 8000 foodgram-project
+docker-compose up
 ```
 Now you can go in your browser to localhost: 8000, where is your application.
 
