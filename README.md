@@ -49,6 +49,19 @@ When the build is complete, run the container:
 ```
 docker-compose up
 ```
+
+- Create migration with command  
+ ```
+ sudo docker-compose exec web python manage.py migrate
+ 
+ ```
+
+- Collect static 
+ ```
+ sudo docker-compose exec web python manage.py collectstatic --no-input
+ 
+ ```
+
 Now you can go in your browser to localhost: 8000, where is your application.
 
 ## Built With
