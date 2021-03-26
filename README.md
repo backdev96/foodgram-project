@@ -6,7 +6,7 @@ Application "Grocery Assistant" is a site where users can publish their recipes,
 
 Site
 
-    84.252.128.238
+    [http://84.252.128.238/](http://84.252.128.238/)
 
 ## Getting Started
 

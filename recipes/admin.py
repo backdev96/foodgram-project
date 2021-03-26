@@ -47,29 +47,7 @@ class ShoppingListAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ShoppingList, ShoppingListAdmin)
-
-
-class FlUsAdmin(admin.ModelAdmin):
-    """
-    Follow user administration.
-    """
-    list_display = ('user', 'author')
-    list_filter = ('user',)
-    search_fields = ('user',)
-
-
 admin.site.register(FollowUser)
-
-
-class FlRecAdmin(admin.ModelAdmin):
-    """
-    Follow recipe administration.
-    """
-    list_display = ('user', 'recipe')
-    list_filter = ('user',)
-    search_fields = ('recipe',)
-
-
 admin.site.register(FollowRecipe)
 
 

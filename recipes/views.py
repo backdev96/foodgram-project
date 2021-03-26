@@ -84,7 +84,8 @@ def recipe_view(request, recipe_id, username):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     username = get_object_or_404(User, username=username)
     ingredients = IngredientRecipe.objects.filter(recipe=recipe)
-    return render(request, 'single_page.html', {'username': username, 'recipe': recipe, 'ingredients': ingredients})
+    return render(request, 'single_page.html', {'username': username,
+             'recipe': recipe, 'ingredients': ingredients})
 
 
 @login_required
@@ -115,26 +116,24 @@ def new_recipe(request):
 def recipe_edit(request, username, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     ingr = recipe.ingredient.all()
+    form = RecipeForm(request.POST or None,
+                          files=request.FILES or None, instance=recipe)
     if request.user != recipe.author:
         return redirect('index')
 
-    if request.method == 'POST':
-        form = RecipeForm(request.POST or None,
-                          files=request.FILES or None, instance=recipe
-                          )
-        if form.is_valid():
-            IngredientRecipe.objects.filter(recipe=recipe).delete()
-            recipe = form.save(commit=False)
-            recipe.author = request.user
-            recipe.save()
-            for item in ingr:
-                IngredientRecipe.objects.create(
-                    amount=ingredients[item],
-                    ingredient=Ingredient.objects.get(name=f'{item}'),
-                    recipe=recipe
-                )
-            form.save_m2m()
-            return redirect('index')
+    if request.method == 'POST' and form.is_valid():
+        IngredientRecipe.objects.filter(recipe=recipe).delete()
+        recipe = form.save(commit=False)
+        recipe.author = request.user
+        recipe.save()
+        for item in ingr:
+            IngredientRecipe.objects.create(
+                amount=ingredients[item],
+                ingredient=Ingredient.objects.get(name=f'{item}'),
+                recipe=recipe
+            )
+        form.save_m2m()
+        return redirect('index')
 
     form =  RecipeForm(request.POST, files=request.FILES, instance=recipe)
 
