@@ -9,8 +9,8 @@ class RecipeForm(forms.ModelForm):
     def check_ingredients_existance(self):
         ingredients = list(
             zip(
-                self.data.getlist('titleIngredient'),
-                self.data.getlist('valueIngredient'),
+                self.data.getlist('titleIngredients'),
+                self.data.getlist('valueIngredients'),
             ),
         )
         if not ingredients:

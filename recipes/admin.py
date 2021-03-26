@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models import Count
 
 from recipes.models import (FollowRecipe, FollowUser, IngredientRecipe,
-                            Ingredient, Recipe, ShoppingList, Tag)
+                            Ingredients, Recipe, ShoppingList, Tag)
 
 
 class IngredientRecipeInline(admin.TabularInline):
@@ -37,7 +37,7 @@ class IngredientsAdmin(admin.ModelAdmin):
     inlines = (IngredientRecipeInline,)
 
 
-admin.site.register(Ingredient, IngredientsAdmin)
+admin.site.register(Ingredients, IngredientsAdmin)
 
 
 class ShoppingListAdmin(admin.ModelAdmin):

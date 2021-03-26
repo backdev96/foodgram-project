@@ -15,7 +15,7 @@
 <main class="main container">
         <div class="main__header">
             <h1 class="main__title">Рецепты</h1>
-                {% include 'tags.html' %}
+                {% include 'tags.html' with tags=tags %}
         </div>
         <div class='card-list'>
             <!-- Вывод ленты записей -->
@@ -25,7 +25,7 @@
         </div>
         <!-- Вывод паджинатора -->
         {% if page.has_other_pages %}
-            {% include "paginator.html" with items=page paginator=paginator%}
+            {% include "paginator.html" with page=page paginator=paginator%}
         {% endif %}
 
 </main>

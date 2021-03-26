@@ -15,6 +15,7 @@
 {% include 'nav.html' with purchases=True%}
 
 <main class="main container">
+    {% if shopping_list %}
     <div class="main__header">
         <h1 class="main__title">Список покупок</h1>
     </div>
@@ -40,8 +41,11 @@
 
         </ul>
         <a href="{% url 'download_card' %}"><button class="button button_style_blue">Скачать список</button></a>
-
-
+        {% else %}
+        <div class="main__header">
+            <h1 class="main__title">Список покупок пуст</h1>
+        </div>
+        {% endif %}
     </div>
 </main>
 

@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import RecipeForm
-from .models import (FollowUser, IngredientRecipe, Ingredient,
+from .models import (FollowUser, IngredientRecipe, Ingredients,
                      Recipe, ShoppingList, Tag, User)
 
 
@@ -23,7 +23,7 @@ def add_ingredients(self):
         data = json.load(fh)
 
     for i in data:
-        ingredient = Ingredient(title=i['title'], dimension=i['dimension'])
+        ingredient = Ingredients(title=i['title'], dimension=i['dimension'])
         ingredient.save()
     return HttpResponse('\n'.join(str(data)))
 
@@ -96,9 +96,9 @@ def new_recipe(request):
         recipe = form.save(commit=False)
         recipe.author = user
         recipe.save()
-        ingr = recipe.ingredient.all()
+        ingr = recipe.ingredients.all()
         for ingr_name, amount in ingr:
-            ingr_obj = get_object_or_404(Ingredient, title=ingr_name)
+            ingr_obj = get_object_or_404(Ingredients, title=ingr_name)
             ingr_recipe = IngredientRecipe(
                 ingredient=ingr_obj,
                 recipe=recipe,
@@ -129,13 +129,11 @@ def recipe_edit(request, username, recipe_id):
         for item in ingr:
             IngredientRecipe.objects.create(
                 amount=ingredients[item],
-                ingredient=Ingredient.objects.get(name=f'{item}'),
+                ingredient=Ingredients.objects.get(name=f'{item}'),
                 recipe=recipe
             )
         form.save_m2m()
         return redirect('index')
-
-    form =  RecipeForm(request.POST, files=request.FILES, instance=recipe)
 
     return render(request, 'recipe_edit.html',
                   {'form': form})
@@ -144,13 +142,9 @@ def recipe_edit(request, username, recipe_id):
 @login_required
 def recipe_delete(request, username, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    user = request.user
-
-    if request.method == 'POST':
-        author = get_object_or_404(User, username=username)
-        if recipe.author == author == user or user.is_superuser:
-            recipe.delete()
-        return redirect('index')
+    if request.user.is_superuser or request.user == recipe.author:
+        recipe.delete()
+    return redirect('index')
 
 
 @login_required
@@ -213,10 +207,10 @@ def shopping_list(request):
 def download_card(request):
     recipes = Recipe.objects.filter(recipe_shopping_list__user=request.user)
     ingredients = recipes.values(
-        'ingredient__title', 'ingredient__dimension'
+        'ingredients__title', 'ingredients__dimension'
     ).annotate(
-        title=F('ingredient__title'),
-        dimension=F('ingredient__dimension'),
+        title=F('ingredients__title'),
+        dimension=F('ingredients__dimension'),
         total_amount=Sum('recipe__amount')
     ).order_by(
         ('-total_amount')

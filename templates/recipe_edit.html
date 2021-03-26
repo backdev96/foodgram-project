@@ -26,26 +26,23 @@
             <div class="form__group">
                 <p class="form__label">Теги</p>
                 <div class="form__field-group">
-                    <div class="tags">
-                        {% for tag in form.fields.tags.choices.queryset %}
-                            <div class="tags__item">
-                                <input  type="checkbox"
-                                        name="tags"
-                                        value="{{ tag.pk }}"
-                                        id="id_tags_{{ forloop.counter }}"
-                                        class="tags__checkbox tags__checkbox_style_{{ tag.colour }}"
-                                        {% if tag in form.instance.tags.all %}checked=""{% endif %}>
-                                <label for="id_tags_{{ forloop.counter }}" class="tags__label">{{ tag.get_name_display }}</label>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    {% for error in form.errors %}
-                    <span class="form__error">
-                        {{ error }}
-                    </span>
+                  <div class="tags">
+                    {% for tag in form.fields.tags.choices.queryset %}
+                      <div class="tags__item">
+                        <input
+                          type="checkbox"
+                          name="tags"
+                          id="id_tags_{{ tag.title }}"
+                          class="tags__checkbox tags__checkbox_style_{{ tag.colour }}"
+                          value="{{ tag.pk }}"
+                          {% if tag.pk in form.tags.value %}checked{% endif %}>
+                        <label for="id_tags_{{ tag.title }}" class="tags__label">{{ tag.display_name }}</label>
+                      </div>
                     {% endfor %}
+                  </div>
+                  <span class="form__error">{{ form.tags.errors }}</span>
                 </div>
-            </div>
+              </div>
             <div class="form__group">
                 <label for="nameIngredient" class="form__label">Ингредиенты</label>
                 <div class="form__field-group">
@@ -95,8 +92,10 @@
             <div class="form__group">
                 <span class="form__label">Загрузить фото</span>
                 <div class="form__field-group">
-                {{ form.image|addclass:"file"}}
-      
+                    <label for="{{ form.image.id_for_label }}"
+                           class="form__file-button">Выбрать файл</label>
+                        {{ form.cooking_time|addclass:"form__input"}}
+    
                     <span class="form__error">{{ form.image.errors }}</span>
                 </div>
             </div>

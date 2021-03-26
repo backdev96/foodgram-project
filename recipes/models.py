@@ -24,7 +24,7 @@ class Tag(models.Model):
         return self.title
 
 
-class Ingredient(models.Model):
+class Ingredients(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)
     dimension = models.CharField(max_length=200, null=True, blank=True)
     description = models.TextField(max_length=200, blank=True, null=True)
@@ -49,9 +49,9 @@ class Recipe(models.Model):
         blank=True,
         null=True)
     description = models.TextField()
-    ingredient = models.ManyToManyField(
-        Ingredient,
-        related_name='recipes',
+    ingredients = models.ManyToManyField(
+        'Ingredients',
+        related_name='recipe',
         through='IngredientRecipe'
     )
     cooking_time = models.PositiveSmallIntegerField(
@@ -84,10 +84,10 @@ class IngredientRecipe(models.Model):
         on_delete=models.CASCADE,
         related_name='recipe')
     ingredient = models.ForeignKey(
-        Ingredient,
+        'Ingredients',
         on_delete=models.CASCADE,
         related_name='ingredient')
-    amount = models.PositiveIntegerField()
+    amount = models.PositiveIntegerField(validators=[MinValueValidator(1)])
 
     def __str__(self):
         return str(self.amount)

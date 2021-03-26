@@ -5,8 +5,9 @@ from django.shortcuts import get_object_or_404
 from django.views import View
 from rest_framework.utils import json
 
-from recipes.models import (FollowRecipe, FollowUser, Ingredient, Recipe,
+from recipes.models import (FollowRecipe, FollowUser, Recipe,
                             ShoppingList)
+from recipes.models import Ingredients as IngredientsModel
 
 SUCCESS_RESPONSE = JsonResponse({'success': True})
 BAD_RESPONSE = JsonResponse(
@@ -16,8 +17,8 @@ BAD_RESPONSE = JsonResponse(
 class Ingredients(LoginRequiredMixin, View):
     def get(self, request):
         text = request.GET['query']
-        ingredients = list(Ingredient.objects.filter(
-            title__icontains=text).values('title', 'dimension'))
+        ingredients = list(IngredientsModel.objects.filter(
+            title__istartswith=text).values('title', 'dimension'))
         return JsonResponse(ingredients, safe=False)
 
 
