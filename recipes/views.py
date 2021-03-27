@@ -13,6 +13,17 @@ from .models import (FollowUser, IngredientRecipe, Ingredients,
 TAGS = ['breakfast', 'lunch', 'dinner']
 
 
+def get_ingredients(request):
+    ingredients = {}
+    for key in dict(request.POST.items()):
+        if 'nameIngredient' in key:
+            a = key.split('_')
+            ingredients[dict(request.POST.items())[key]] = int(request.POST[
+                f'valueIngredient_{a[1]}'])
+
+    return ingredients
+
+
 @user_passes_test(lambda u: u.is_superuser)
 def add_ingredients(self):
     import json
@@ -93,11 +104,11 @@ def new_recipe(request):
     user = User.objects.get(username=request.user)
     form = RecipeForm(request.POST or None, files=request.FILES or None)
     if request.method == 'POST' and form.is_valid():
+        ingr = get_ingredients(request)
         recipe = form.save(commit=False)
         recipe.author = user
         recipe.save()
-        ingr = recipe.ingredients.all()
-        for ingr_name, amount in ingr:
+        for ingr_name, amount in ingr.items():
             ingr_obj = get_object_or_404(Ingredients, title=ingr_name)
             ingr_recipe = IngredientRecipe(
                 ingredient=ingr_obj,
@@ -115,29 +126,33 @@ def new_recipe(request):
 @login_required
 def recipe_edit(request, username, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    ingr = recipe.ingredient.all()
-    form = RecipeForm(request.POST or None,
-                          files=request.FILES or None, instance=recipe)
+
     if request.user != recipe.author:
         return redirect('index')
 
-    if request.method == 'POST' and form.is_valid():
-        IngredientRecipe.objects.filter(recipe=recipe).delete()
-        recipe = form.save(commit=False)
-        recipe.author = request.user
-        recipe.save()
-        for item in ingr:
-            IngredientRecipe.objects.create(
-                amount=ingredients[item],
-                ingredient=Ingredients.objects.get(name=f'{item}'),
-                recipe=recipe
-            )
-        form.save_m2m()
-        return redirect('index')
+    if request.method == 'POST':
+        form = RecipeForm(request.POST or None,
+                          files=request.FILES or None, instance=recipe
+                          )
+        ingredients = get_ingredients(request)
+        if form.is_valid():
+            IngredientRecipe.objects.filter(recipe=recipe).delete()
+            recipe = form.save(commit=False)
+            recipe.author = request.user
+            recipe.save()
+            for item in ingredients:
+                IngredientRecipe.objects.create(
+                    amount=ingredients[item],
+                    ingredient=Ingredients.objects.get(title=f'{item}'),
+                    recipe=recipe
+                )
+            form.save_m2m()
+            return redirect('index')
 
+    form = RecipeForm(request.POST or None,
+                      files=request.FILES or None, instance=recipe)
     return render(request, 'recipe_edit.html',
-                  {'form': form})
-
+                  {'form': form, 'recipe': recipe, })
 
 @login_required
 def recipe_delete(request, username, recipe_id):

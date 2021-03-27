@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Создание рецепта{% endblock %}
+{% block title %}Редактирование рецепта{% endblock %}
 
 {% load static %}
 {% block static %}
@@ -92,14 +92,14 @@
             <div class="form__group">
                 <span class="form__label">Загрузить фото</span>
                 <div class="form__field-group">
-                    <label for="{{ form.image.id_for_label }}"
-                           class="form__file-button">Выбрать файл</label>
-                        {{ form.cooking_time|addclass:"form__input"}}
-    
-                    <span class="form__error">{{ form.image.errors }}</span>
+                    {{ form.image|addclass:"form__file-button"  }}
+                    {% if form.errors %}
+                        {% for error in field.errors %}
+                            <span class="form__error">{{ error|escape }}</span>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
-            <div class="form__footer">
           
             
                 <button class="button button_style_blue">Сохранить</button> <a style="margin-left: 2.5em" href="{% url 'recipe_delete' username=form.instance.author.username recipe_id=form.instance.pk %}" class="form__ingredient-link">Удалить</a>

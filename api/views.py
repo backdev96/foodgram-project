@@ -14,7 +14,7 @@ BAD_RESPONSE = JsonResponse(
         {'success': False}, status=400
     )
 
-class Ingredients(LoginRequiredMixin, View):
+class Ingredient(LoginRequiredMixin, View):
     def get(self, request):
         text = request.GET['query']
         ingredients = list(IngredientsModel.objects.filter(

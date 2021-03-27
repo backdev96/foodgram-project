@@ -51,7 +51,7 @@ class Recipe(models.Model):
     description = models.TextField()
     ingredients = models.ManyToManyField(
         'Ingredients',
-        related_name='recipe',
+        related_name='recipes',
         through='IngredientRecipe'
     )
     cooking_time = models.PositiveSmallIntegerField(
@@ -87,7 +87,7 @@ class IngredientRecipe(models.Model):
         'Ingredients',
         on_delete=models.CASCADE,
         related_name='ingredient')
-    amount = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    amount = models.PositiveIntegerField(null=True, validators=[MinValueValidator(1)])
 
     def __str__(self):
         return str(self.amount)
