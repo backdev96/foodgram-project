@@ -90,3 +90,9 @@ def get_purchases_count(context, **kwargs):
 def count_purchase(user):
     '''Подсчет количества рецептов в списке покупок'''
     return ShoppingList.objects.filter(user_id=user.id).count()
+
+
+@register.filter
+def tags_to_url_params(tags):
+    url_param_tags = [f'tag={tag}' for tag in tags]
+    return '&' + '&'.join(url_param_tags)

@@ -116,6 +116,8 @@ def new_recipe(request):
                 amount=amount,
             )
             ingr_recipe.save()
+            if ingr_recipe.amount == 0:
+                return redirect('index')
         form.save_m2m()
         return redirect('index')
     else:

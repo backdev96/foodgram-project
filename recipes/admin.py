@@ -18,6 +18,7 @@ class RecipesAdmin(admin.ModelAdmin):
     list_filter = ('author', 'tags__title')
     search_fields = ('title', 'author__username')
     ordering = ('-pub_date', )
+    inlines = (IngredientRecipeInline, )
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
