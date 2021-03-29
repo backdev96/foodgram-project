@@ -2,7 +2,7 @@
 
 Application "Grocery Assistant" is a site where users can publish their recipes, subscribe to other authors, add their recipes to favourites. Service "Shopping List" allows users to create a list of products required to cook selected meals.
 
-![foodgram-project workflow](https://github.com/backdev96/foodgram-project/workflows/foodgram/badge.svg)(https://github.com/backdev96/foodgram-project/actions)
+[![Foodgram workflow](https://github.com/backdev96/foodgram-project/workflows/Yamdb-app_workflow/badge.svg)](https://github.com/backdev96/foodgram-project/actions)
 
 Site
 
