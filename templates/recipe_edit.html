@@ -92,18 +92,12 @@
             <div class="form__group">
                 <span class="form__label">Загрузить фото</span>
                 <div class="form__field-group">
-                    {{ form.image|addclass:"form__file-button"  }}
-                    {% if form.errors %}
-                        {% for error in field.errors %}
-                            <span class="form__error">{{ error|escape }}</span>
-                        {% endfor %}
-                    {% endif %}
+                  {{ form.image|addclass:'form__file-button' }}
+                  <span class="form__error">{{ form.image.errors }}</span>
                 </div>
-            </div>
-          
-            
+              </div>
+            <div class="form__footer">
                 <button class="button button_style_blue">Сохранить</button> <a style="margin-left: 2.5em" href="{% url 'recipe_delete' username=form.instance.author.username recipe_id=form.instance.pk %}" class="form__ingredient-link">Удалить</a>
-        
             </div>
         </form>
     </div>

@@ -40,15 +40,20 @@ def add_ingredients(self):
 
 
 def index(request):
-    tags = request.GET.getlist('tag', TAGS)
+    tags = request.GET.getlist('tag', [])
     all_tags = Tag.objects.all()
-    recipes = Recipe.objects.filter(
-        tags__title__in=tags
-    ).select_related(
-        'author'
-    ).prefetch_related(
-        'tags'
-    ).distinct()
+    if not tags:
+        recipes = Recipe.objects.select_related(
+            'author'
+        ).all()
+    else:
+        recipes = Recipe.objects.filter(
+            tags__title__in=tags
+        ).select_related(
+            'author'
+        ).prefetch_related(
+            'tags'
+        ).distinct()
     paginator = Paginator(recipes, settings.PAGINATION_PAGE_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -68,11 +73,13 @@ def index(request):
 def profile(request, username):
     tags = request.GET.getlist('tag', TAGS)
     all_tags = Tag.objects.all()
-
     author = get_object_or_404(User, username=username)
-    author_recipes = author.recipes.filter(
-        tags__title__in=tags
-    ).prefetch_related('tags').distinct()
+    if tags == ['breakfast', 'lunch', 'dinner']:
+        author_recipes = author.recipes.all()
+    else:
+        author_recipes = author.recipes.filter(
+            tags__title__in=tags
+        ).prefetch_related('tags').distinct()
 
     paginator = Paginator(author_recipes, settings.PAGINATION_PAGE_SIZE)
     page_number = request.GET.get('page')
@@ -186,14 +193,24 @@ def follow_index(request):
 def favorite_index(request):
     tags = request.GET.getlist('tag', TAGS)
     all_tags = Tag.objects.all()
-    recipes = Recipe.objects.filter(
-        following_recipe__user=request.user,
-        tags__title__in=tags
-    ).select_related(
-        'author'
-    ).prefetch_related(
-        'tags'
-    ).distinct()
+    print(tags)
+    if tags == ['breakfast', 'lunch', 'dinner']:
+        recipes = Recipe.objects.filter(
+            following_recipe__user=request.user,
+        ).select_related(
+            'author'
+        ).prefetch_related(
+            'tags'
+        ).distinct()
+    else:
+        recipes = Recipe.objects.filter(
+            following_recipe__user=request.user,
+            tags__title__in=tags
+        ).select_related(
+            'author'
+        ).prefetch_related(
+            'tags'
+        ).distinct()
     paginator = Paginator(recipes, settings.PAGINATION_PAGE_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)

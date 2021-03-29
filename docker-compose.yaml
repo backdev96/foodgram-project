@@ -22,19 +22,20 @@ services:
     volumes:
       - static_volume:/app/static/
       - media_volume:/app/media/
+      - nginx_conf:/code/nginx/
     env_file:
       - ./.env
     depends_on:
       - db
 
   nginx:
-    container_name: nginx
+    image: nginx:1.19.6
     restart: always
     image: nginx:1.19
     volumes:
       - static_volume:/app/static/
       - media_volume:/app/media/
-      - ./nginx/default.conf
+      - nginx_conf:/etc/nginx/conf.d/
     ports:
       - 80:80
     depends_on:

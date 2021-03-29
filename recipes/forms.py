@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import CheckboxSelectMultiple
+from django.forms import CheckboxSelectMultiple, FileInput
 
 from .models import Recipe
 
@@ -26,4 +26,5 @@ class RecipeForm(forms.ModelForm):
             'cooking_time']
         widgets = {
             'tag': CheckboxSelectMultiple(),
+            'image': FileInput(),
         }
