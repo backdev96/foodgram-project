@@ -46,7 +46,6 @@ class Recipe(models.Model):
     title = models.CharField(max_length=200)
     image = models.ImageField(
         upload_to='recipes/',
-        blank=True,
         null=True)
     description = models.TextField()
     ingredients = models.ManyToManyField(
@@ -82,12 +81,16 @@ class IngredientRecipe(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='recipe')
+        related_name='recipe'
+        )
     ingredient = models.ForeignKey(
         'Ingredients',
         on_delete=models.CASCADE,
-        related_name='ingredient')
-    amount = models.PositiveIntegerField(null=True, validators=[MinValueValidator(1)])
+        related_name='ingredient'
+        )
+    amount = models.PositiveIntegerField(null=True, validators=[MinValueValidator(1)],
+                                         blank=False
+                                        )
 
     def __str__(self):
         return str(self.amount)

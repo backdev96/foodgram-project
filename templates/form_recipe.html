@@ -55,7 +55,7 @@
                         <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                     </div>
                     <div class="form__field-group-ingredientes-container">
-                        {% for in in ingr %}
+                        {% for in in form.instance.IngredientRecipe_set.all %}
                             <div class="form__field-item-ingredient" id="{{ in.pk }}">
                                 <span>{{ in.ingredient.title }} {{ in.ingredient.amount }}{{ in.ingredient.dimension }}</span>
                                 <span class="form__field-item-delete" ></span>
@@ -66,11 +66,8 @@
                         {% endfor %}
                     </div>
                     <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>
-                    {% for error in form.errors %}
                     <span class="form__error">
-                        {{ error }}
                     </span>
-                    {% endfor %}
                 </div>
             </div>
             <div class="form__group">
