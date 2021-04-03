@@ -11,7 +11,7 @@
 
 {% block content %}
 
-{% include 'nav.html' with logout=True %}
+{% include 'includes/nav.html' with logout=True %}
 <main class="main container">
 
     <div class="custom-center-block">
@@ -20,6 +20,6 @@
     <a href="{% url 'index' %}"> <button  class="button button_style_blue" >Перейти на главную</button> </a>
 
 </main>
-{% include 'footer.html' %}
+{% include 'includes/footer.html' %}
 
 {% endblock  %}

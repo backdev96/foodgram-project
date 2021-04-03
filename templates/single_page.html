@@ -18,7 +18,7 @@
         <div class="single-card" data-id="{{ recipe.id }}" data-author="{{ recipe.author.id }}">
         {% csrf_token %}
         {% load thumbnail %}
-        {% thumbnail recipe.image "600x300" crop="center" upscale=True as im %}
+        {% thumbnail recipe.image "600x300"  as im %}
         <img src="{{ im.url }}" alt="The author of the recipe did not add a photo" class="single-card__image"></a>
         {% endthumbnail %}
             <div class="single-card__info">

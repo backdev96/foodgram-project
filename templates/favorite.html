@@ -10,24 +10,24 @@
 
 {% block content %}
 {% csrf_token %}
-{% include 'nav.html' %}
+{% include 'includes/nav.html' %}
 <main class="main container">
         <div class="main__header">
             <h1 class="main__title">Избранное</h1>
-            {% include "tags.html" with url=request.path food_time=food_time %}
+            {% include "includes/tags.html" with url=request.path food_time=food_time %}
         </div>
         <div class='card-list'>
             <!-- Вывод ленты записей -->
                 {% for recipe in page %}
-                    {% include 'recipe.html' with recipe=recipe %}
+                    {% include 'includes/recipe.html' with recipe=recipe %}
                 {% endfor %}
         </div>
         <!-- Вывод паджинатора -->
         {% if page.has_other_pages %}
-            {% include "paginator.html" with items=page paginator=paginator %}
+            {% include "includes/paginator.html" with items=page paginator=paginator %}
         {% endif %}
 </main>
-{% include 'footer.html' %}
+{% include 'includes/footer.html' %}
 
 <script src="{% static '/js/components/MainCards.js' %}"></script>
 

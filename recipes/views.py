@@ -72,8 +72,11 @@ def index(request):
 
 def profile(request, username):
     tags = request.GET.getlist('tag', TAGS)
+    user = request.user
     all_tags = Tag.objects.all()
     author = get_object_or_404(User, username=username)
+    following = FollowUser.objects.filter(user__username=user,
+                                            author=author).count()
     if tags == ['breakfast', 'lunch', 'dinner']:
         author_recipes = author.recipes.all()
     else:
@@ -94,6 +97,7 @@ def profile(request, username):
             'paginator': paginator,
             'tags': tags,
             'all_tags': all_tags,
+            'following': following,
         }
     )
 

@@ -49,13 +49,12 @@ class Subscribe(LoginRequiredMixin, View):
         author_id = req.get('id', None)
         if author_id is not None:
             author = get_object_or_404(User, id=author_id)
-            obj, created = FollowUser.objects.get_or_create(
-                user=request.user, author=author
+            FollowUser.objects.get_or_create(
+                user=self.request.user, author=author
             )
-            if created:
-                return SUCCESS_RESPONSE
-            return JsonResponse({'success': False})
-        return BAD_RESPONSE
+            return SUCCESS_RESPONSE
+        else:
+            return BAD_RESPONSE
 
     def delete(self, request, author_id):
         deleted_subscription = FollowUser.objects.filter(

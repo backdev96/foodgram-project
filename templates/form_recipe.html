@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
 {% load user_filters %}
-{% include 'nav.html' with new_recipe=True%}
+{% include 'includes/nav.html' with new_recipe=True%}
 
 <main class="main container">
     <div class="main__header">
@@ -89,12 +89,10 @@
             <div class="form__group">
                 <span class="form__label">Загрузить фото</span>
                 <div class="form__field-group">
-                {{ form.image|addclass:"file"}}
-      
-                    <span class="form__error">{{ form.image.errors }}</span>
+                  {{ form.image|addclass:"form__file-button" }}
+                  <span class="form__error">{{ form.image.errors }}</span>
                 </div>
-            </div>
-            <div class="form__footer">
+              </div>
             {% block form_button %}
             
                 <button class="button button_style_blue">Создать рецепт</button>
@@ -104,7 +102,7 @@
     </div>
 </main>
 
-{% include 'footer.html' %}
+{% include 'includes/footer.html' %}
 
 <script src="{% static 'js/config/config.js' %}"></script>
 <script src="{% static 'js/components/Header.js' %}"></script>

@@ -11,25 +11,25 @@
 
 
 {% block content %}
-{% include 'nav.html' with index=True %}
+{% include 'includes/nav.html' with index=True %}
 <main class="main container">
         <div class="main__header">
             <h1 class="main__title">Рецепты</h1>
-                {% include 'tags.html' %}
+                {% include 'includes/tags.html' %}
         </div>
         <div class='card-list'>
             <!-- Вывод ленты записей -->
                 {% for recipe in page %}
-                    {% include 'recipe.html' with recipe=recipe %}
+                    {% include 'includes/recipe.html' with recipe=recipe %}
                 {% endfor %}
         </div>
         <!-- Вывод паджинатора -->
         {% if page.has_other_pages %}
-            {% include "paginator.html" with page=page paginator=paginator%}
+            {% include "includes/paginator.html" with page=page paginator=paginator%}
         {% endif %}
 
 </main>
-{% include 'footer.html' %}
+{% include 'includes/footer.html' %}
 <script src="{% static 'js/config/config.js' %}"></script>
 {% if user.is_authenticated %}
 <script src="{% static 'js/components/MainCards.js' %}"></script>

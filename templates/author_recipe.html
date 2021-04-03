@@ -10,36 +10,48 @@
 
 {% block content %}
 {% csrf_token %}
-{% include 'nav.html' with index=True%}
+{% include 'includes/nav.html' with index=True%}
     <main class="main container">
         <div class="main__header">
             <h1 class="main__title">{% firstof author.get_full_name author.username %}</h1>
-        {% include 'tags.html' %}
+        {% include 'includes/tags.html' %}
 
         </div>
 
         {% if user.is_authenticated and author != user %}
         
         <div class="author-subscribe" data-author="{{ author.id }}">
-        {% if username|is_follow:user %}
-            <button class="button button_style_light-blue button_size_auto" name="subscribe"><span class="icon-check button__icon"></span>Отписаться от автора </button></p>
-        {% else %}
-            <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_auto" name="subscribe" data-out>Подписаться на автора</button></p>
-        {% endif %}
+            {% if following %}
+            <p style="padding: 0 0 2em 0;">
+                <button class="button button_style_light-blue-outline button_size_subscribe"
+                        name="subscribe">
+                    Отписаться от автора
+                </button>
+            </p>
+            {% else %}
+            <p style="padding: 0 0 2em 0;">
+                <button class="button button_style_light-blue button_size_subscribe"
+                        name="subscribe" data-out>
+                    Подписаться на автора
+                </button>
+            </p>
+            {% endif %}
         </div>
         {% endif %}
 
+
+
 <div class="card-list">
             {% for recipe in page %}
-            {% include 'recipe.html' with recipe=recipe %}
+            {% include 'includes/recipe.html' with recipe=recipe %}
             {% endfor %}
     
     </div>
     {% if page.has_other_pages %}
-            {% include "paginator.html" with items=page paginator=paginator %}
+            {% include "includes/paginator.html" with items=page paginator=paginator %}
         {% endif %}
     </main>
-  {% include 'footer.html' %}
+  {% include 'includes/footer.html' %}
   <script src="{% static 'js/components/MainCards.js' %}"></script>
 
   <script src="{% static 'js/components/Purchases.js' %}"></script>
