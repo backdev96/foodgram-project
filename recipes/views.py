@@ -243,8 +243,6 @@ def download_card(request):
     ingredients = recipes.values(
         'ingredients__title', 'ingredients__dimension'
     ).annotate(
-        title=F('ingredients__title'),
-        dimension=F('ingredients__dimension'),
         total_amount=Sum('recipe__amount')
     ).order_by(
         ('-total_amount')
