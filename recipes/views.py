@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import F, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
 from .forms import RecipeForm
 from .models import (FollowUser, IngredientRecipe, Ingredients,
@@ -138,34 +139,38 @@ def new_recipe(request):
 
 @login_required
 def recipe_edit(request, username, recipe_id):
-    recipe = get_object_or_404(Recipe, id=recipe_id)
 
+    recipe = get_object_or_404(Recipe, id=recipe_id, author__username=username)
+    ingreidents = IngredientRecipe.objects.filter(recipe=recipe)
     if request.user != recipe.author:
-        return redirect('index')
-
-    if request.method == 'POST':
-        form = RecipeForm(request.POST or None,
-                          files=request.FILES or None, instance=recipe
-                          )
-        ingredients = get_ingredients(request)
-        if form.is_valid():
-            IngredientRecipe.objects.filter(recipe=recipe).delete()
-            recipe = form.save(commit=False)
-            recipe.author = request.user
-            recipe.save()
-            for item in ingredients:
-                IngredientRecipe.objects.create(
-                    amount=ingredients[item],
-                    ingredient=Ingredients.objects.get(title=f'{item}'),
-                    recipe=recipe
-                )
-            form.save_m2m()
-            return redirect('index')
-
-    form = RecipeForm(request.POST or None,
-                      files=request.FILES or None, instance=recipe)
-    return render(request, 'recipe_edit.html',
-                  {'form': form, 'recipe': recipe, })
+        return redirect(reverse('recipe', args=(username ,recipe_id)))
+    form = RecipeForm(
+        request.POST or None, files=request.FILES or None, instance=recipe)
+    if not form.is_valid():
+        return render(
+            request, 
+            "recipe_edit.html",
+            {"recipe": recipe, 
+            "form": form,
+            "ingreidents": ingreidents}
+        )  
+    recipe = form.save(commit=False)
+    recipe.author = request.user
+    recipe.save()
+    form.save_m2m()
+    
+    request_dict = request.POST
+    numbers = [k[15:] for k,v in request_dict.items() if (
+        "nameIngredient" in k and v != "")
+    ]
+   
+    for number in numbers:
+        name = "nameIngredient_" + str(number)
+        value ="valueIngredient_" + str(number)
+        ingredient = get_object_or_404(Ingredients, title=request_dict[name])
+        number_create = IngredientRecipe.objects.create(
+            recipe=recipe, ingredient=ingredient, amount=request_dict[value])   
+    return redirect(reverse('recipe_view', args=(username ,recipe_id)))
 
 @login_required
 def recipe_delete(request, username, recipe_id):

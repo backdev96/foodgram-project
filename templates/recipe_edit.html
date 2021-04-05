@@ -55,15 +55,15 @@
                         <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                     </div>
                     <div class="form__field-group-ingredientes-container">
-                        {% for in in form.instance.IngredientRecipe_set.all %}
-                            <div class="form__field-item-ingredient" id="{{ in.pk }}">
-                                <span>{{ in.ingredient.title }} {{ in.amount }}{{ in.ingredient.dimension }}</span>
-                                <span class="form__field-item-delete" ></span>
-                                <input id="nameIngredient_{{ in.pk }}" name="nameIngredient_{{ in }}" type="hidden" value="{{ in.ingredient.title }}">
-                                <input id="valueIngredient_{{ in.pk }}" name="valueIngredient_{{ in }}" type="hidden" value="{{ in.amount }}">
-                                <input id="unitsIngredient_{{ in.pk }}" name="unitsIngredient_{{ in }}" type="hidden" value="{{ in.ingredient.dimension }}">
-                            </div>
-                        {% endfor %}
+                        {% for ingredient in ingreidents %}
+                                <div class="form__field-item-ingredient" id="ing_{{ forloop.counter }}">
+                                    <span> {{ ingredient.ingredient }} {{ ingredient.amount }} {{ ingredient.ingredient.dimension }}</span>
+                                    <span class="form__field-item-delete"></span>
+                                    <input id="nameIngredient_{{ forloop.counter }}" name="nameIngredient_{{ forloop.counter }}" type="hidden" value="{{ ingredient.ingredient.title }}">
+                                    <input id="valueIngredient_{{ forloop.counter }}" name="valueIngredient_{{ forloop.counter }}" type="hidden" value="{{ ingredient.amount }}">
+                                    <input id="unitsIngredient_{{ forloop.counter }}" name="unitsIngredient_{{ forloop.counter }}" type="hidden" value="{{ ingredient.ingredient.dimension }}">
+                                </div>
+                            {% endfor %}
                     </div>
                     <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>
                     {% for error in form.errors %}
