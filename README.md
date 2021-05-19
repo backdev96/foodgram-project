@@ -1,5 +1,3 @@
-# Project Title
-
 Application "Grocery Assistant" is a site where users can publish their recipes, subscribe to other authors, add their recipes to favourites. Service "Shopping List" allows users to create a list of products required to cook selected meals.
 
 
