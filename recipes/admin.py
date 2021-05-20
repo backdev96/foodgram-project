@@ -12,6 +12,10 @@ class IngredientRecipeInline(admin.TabularInline):
 
 
 class RecipesAdmin(admin.ModelAdmin):
+    '''
+    Recipe admin. Search fields: title, author's username.
+    Ordering - pub_date.
+    '''
     list_display = (
         'title', 'author', 'get_favorite_count'
     )
@@ -32,6 +36,10 @@ admin.site.register(Recipe, RecipesAdmin)
 
 
 class IngredientsAdmin(admin.ModelAdmin):
+    '''
+    Ingredients admin.
+    Filter - title, search field - title.
+    '''
     list_display = ('title', 'dimension')
     list_filter = ('title',)
     search_fields = ('title',)
@@ -42,6 +50,10 @@ admin.site.register(Ingredients, IngredientsAdmin)
 
 
 class ShoppingListAdmin(admin.ModelAdmin):
+    '''
+    Shopping list admin. Filter - user.
+    search field - user.
+    '''
     list_display = ('user', 'recipe')
     list_filter = ('user',)
     search_fields = ('user',)
@@ -53,6 +65,10 @@ admin.site.register(FollowRecipe)
 
 
 class TagAdmin(admin.ModelAdmin):
+    '''
+    Tag admin.
+    Filter - title
+    '''
     list_display = ('title', 'colour', 'display_name')
     list_filter = ('title', )
 

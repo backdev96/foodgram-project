@@ -39,6 +39,12 @@ class Ingredients(models.Model):
 
 
 class Recipe(models.Model):
+    '''
+    Recipe model.
+    ForeignKey - author.
+    Ingredients - many to many field.
+    Ordering - pub_date.
+    '''
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -78,6 +84,10 @@ class Recipe(models.Model):
 
 
 class IngredientRecipe(models.Model):
+    '''
+    Ingredients for recipes model.
+    ForeignKey - recipe, ingredient.
+    '''
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -97,6 +107,10 @@ class IngredientRecipe(models.Model):
 
 
 class FollowRecipe(models.Model):
+    '''
+    Follow recipe model.
+    ForeignKey - author, recipe.
+    '''
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -121,6 +135,10 @@ class FollowRecipe(models.Model):
 
 
 class FollowUser(models.Model):
+    '''
+    Follow user model.
+    ForeignKey - author, user.
+    '''
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -149,6 +167,10 @@ class FollowUser(models.Model):
 
 
 class ShoppingList(models.Model):
+    '''
+    Shopping list model.
+    ForeignKey - user, recipe.
+    '''
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
