@@ -41,6 +41,12 @@ def add_ingredients(self):
 
 
 def index(request):
+    '''
+    Foodgram mainpage.
+    Shows all tags by default.
+    Pagination page size is 6.
+    Returns index.html.
+    '''
     tags = request.GET.getlist('tag', [])
     all_tags = Tag.objects.all()
     if not tags:
@@ -72,6 +78,11 @@ def index(request):
 
 
 def profile(request, username):
+    '''
+    Profile's page.
+    Pagination page size is 6.
+    Returns author_recipe.html.
+    '''
     tags = request.GET.getlist('tag', TAGS)
     user = request.user
     all_tags = Tag.objects.all()
@@ -104,6 +115,9 @@ def profile(request, username):
 
 
 def recipe_view(request, recipe_id, username):
+    '''
+    Recipe view function.
+    '''
     recipe = get_object_or_404(Recipe, id=recipe_id)
     username = get_object_or_404(User, username=username)
     ingredients = IngredientRecipe.objects.filter(recipe=recipe)
@@ -113,6 +127,9 @@ def recipe_view(request, recipe_id, username):
 
 @login_required
 def new_recipe(request):
+    '''
+    Recipe creation function.
+    '''
     user = User.objects.get(username=request.user)
     form = RecipeForm(request.POST or None, files=request.FILES or None)
     if request.method == 'POST' and form.is_valid():
@@ -139,7 +156,9 @@ def new_recipe(request):
 
 @login_required
 def recipe_edit(request, username, recipe_id):
-
+    '''
+    Recipe edit function.
+    '''
     recipe = get_object_or_404(Recipe, id=recipe_id, author__username=username)
     ingreidents = IngredientRecipe.objects.filter(recipe=recipe)
     if request.user != recipe.author:
@@ -182,6 +201,11 @@ def recipe_delete(request, username, recipe_id):
 
 @login_required
 def follow_index(request):
+    '''
+    Follow user function.
+    Paginator page size is 3.
+    Returns follow.html.
+    '''
     follow = FollowUser.objects.filter(user=request.user)
     cnt = {}
     for author in follow:
@@ -200,6 +224,11 @@ def follow_index(request):
 
 @login_required
 def favorite_index(request):
+    '''
+    Favourite page function.
+    Paginator page size is 6.
+    Returns favourite.html
+    '''
     tags = request.GET.getlist('tag', TAGS)
     all_tags = Tag.objects.all()
     print(tags)
